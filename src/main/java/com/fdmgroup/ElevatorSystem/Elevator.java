@@ -7,7 +7,7 @@ public class Elevator implements Runnable{
 	private String name;
 	private boolean isUp;
 	private int currentFloor;
-	private Queue<Object> people;
+	private Queue<Person> people;
 	
 	public String getName() {
 		return name;
@@ -27,10 +27,10 @@ public class Elevator implements Runnable{
 	public void setCurrentFloor(int currentFloor) {
 		this.currentFloor = currentFloor;
 	}
-	public Queue<Object> getPeople() {
+	public Queue<Person> getPeople() {
 		return people;
 	}
-	public void setPeople(Queue<Object> people) {
+	public void setPeople(Queue<Person> people) {
 		this.people = people;
 	}
 	
@@ -38,7 +38,7 @@ public class Elevator implements Runnable{
 		super();
 		isUp = true;
 		currentFloor = 1;
-		people = new LinkedList<Object>();
+		people = new LinkedList<Person>();
 	}
 
 	@Override
