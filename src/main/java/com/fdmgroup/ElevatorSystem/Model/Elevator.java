@@ -1,6 +1,5 @@
 package com.fdmgroup.ElevatorSystem.Model;
 
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
