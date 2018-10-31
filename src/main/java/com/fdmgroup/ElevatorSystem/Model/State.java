@@ -1,4 +1,4 @@
-package com.fdmgroup.ElevatorSystem;
+package com.fdmgroup.ElevatorSystem.Model;
 
 public enum State {
 	
