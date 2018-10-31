@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WaitingPeople {
-	private List<Object> waitingPeople;
+	private List<Person> waitingPeople;
 
-	public List<Object> getWaitingPeople() {
+	public List<Person> getWaitingPeople() {
 		return waitingPeople;
 	}
 	
@@ -14,17 +14,13 @@ public class WaitingPeople {
 		return waitingPeople.get(i);
 	}
 
-	public void setWaitingPeople(List<Object> waitingPeople) {
+	public void setWaitingPeople(List<Person> waitingPeople) {
 		this.waitingPeople = waitingPeople;
-	}
-	
-	public void addWaitingQueue(List<Person> list) {
-		waitingPeople.add(list);
 	}
 
 	public WaitingPeople() {
 		super();
-		waitingPeople = new ArrayList<Object>();
+		waitingPeople = new ArrayList<Person>();
 	}
 	public int size() {
 		return waitingPeople.size();
