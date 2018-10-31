@@ -1,5 +1,6 @@
 package com.fdmgroup.ElevatorSystem;
 
-public class Combination {
+public class Algorithm {
 
+	
 }
