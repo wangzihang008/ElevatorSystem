@@ -20,9 +20,12 @@ public class WaitingPeople {
 		waitingPeople.put(elevator, list);
 	}
 
-	public WaitingPeople() {
+	public WaitingPeople(List<Elevator> elevators) {
 		super();
 		waitingPeople = new HashMap<Elevator, Object>();
+		for(Elevator e : elevators) {
+			waitingPeople.put(e, new ArrayList<Person>());
+		}
 	}
 	
 	

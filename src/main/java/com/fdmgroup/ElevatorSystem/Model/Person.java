@@ -33,6 +33,14 @@ public class Person {
 		this.isWaiting = isWaiting;
 	}
 	
+	public int getFloorsToGo() {
+		if(startFloor - destinationFloor > 0) {
+			return startFloor - destinationFloor;
+		}else {
+			return destinationFloor - startFloor;
+		}
+	}
+	
 	@Override
 	public String toString() {
 		

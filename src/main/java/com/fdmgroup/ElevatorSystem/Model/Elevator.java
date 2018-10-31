@@ -63,6 +63,10 @@ public class Elevator implements Runnable{
 		return max == people.size();
 	}
 	
+	public boolean isEmpty() {
+		return people.size() < 1;
+	}
+	
 	public Elevator(int max) {
 		super();
 		isUp = true;
@@ -189,11 +193,21 @@ public class Elevator implements Runnable{
 	@Override
 	public String toString() {
 		String result = name + " is at Level " + currentFloor + ". ";
-		result += "There are " + people.size() + " in this elevator. ";
-		if(isUp) {
-			result += "It is going up. "; 
-		}else {
-			result += "It is going down. "; 
+		result += "There are " + people.size() + " people in this elevator. ";
+		if(state == State.MOVE) {
+			if(isUp) {
+				result += "It is going up. "; 
+			}else {
+				result += "It is going down. "; 
+			}
+		}else if(state == State.SERVICE) {
+			result += "It is servicing. "; 
+		}else if(state == State.STOP) {
+			result += "It stop. "; 
+		}else if(state == State.SLOWDOWN) {
+			result += "It is slowing down. "; 
+		}else if(state == State.SPEEDUP) {
+			result += "It is speeding up. "; 
 		}
 		
 		return result;
