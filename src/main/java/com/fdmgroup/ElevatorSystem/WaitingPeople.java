@@ -9,6 +9,10 @@ public class WaitingPeople {
 	public List<Object> getWaitingPeople() {
 		return waitingPeople;
 	}
+	
+	public Object getWaitingPeople(int i) {
+		return waitingPeople.get(i);
+	}
 
 	public void setWaitingPeople(List<Object> waitingPeople) {
 		this.waitingPeople = waitingPeople;
@@ -22,6 +26,8 @@ public class WaitingPeople {
 		super();
 		waitingPeople = new ArrayList<Object>();
 	}
-	
+	public int size() {
+		return waitingPeople.size();
+	}
 	
 }
