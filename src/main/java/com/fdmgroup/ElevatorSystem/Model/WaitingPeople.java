@@ -1,26 +1,28 @@
 package com.fdmgroup.ElevatorSystem.Model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WaitingPeople {
-	private List<Object> waitingPeople;
+	private Map<Elevator, Object> waitingPeople;
 
-	public List<Object> getWaitingPeople() {
+	public Map<Elevator, Object> getWaitingPeople() {
 		return waitingPeople;
 	}
 
-	public void setWaitingPeople(List<Object> waitingPeople) {
+	public void setWaitingPeople(Map<Elevator, Object> waitingPeople) {
 		this.waitingPeople = waitingPeople;
 	}
 	
-	public void addWaitingQueue(List<Person> list) {
-		waitingPeople.add(list);
+	public void addWaitingQueue(Elevator elevator, List<Person> list) {
+		waitingPeople.put(elevator, list);
 	}
 
 	public WaitingPeople() {
 		super();
-		waitingPeople = new ArrayList<Object>();
+		waitingPeople = new HashMap<Elevator, Object>();
 	}
 	
 	

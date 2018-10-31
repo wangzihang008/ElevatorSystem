@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 import com.fdmgroup.ElevatorSystem.Controller.ElevatorController;
 import com.fdmgroup.ElevatorSystem.Model.Person;
@@ -20,6 +21,9 @@ import com.fdmgroup.ElevatorSystem.Model.Person;
 public class ElevatorView {
 	
 	private ElevatorController elevatorController;
+	private JButton buttonSubmit;
+	private JTextField textCurrentFloor;
+	private JTextField textDestinationFloor;
 	
 	public ElevatorView(ElevatorController elevatorController) {
 		this.elevatorController = elevatorController;
@@ -30,9 +34,9 @@ public class ElevatorView {
 		
 		JLabel labelCurrentFloor = new JLabel("Current Floor");
 		JLabel labelDestinationFloor = new JLabel("Destination Floor");
-		JTextField textCurrentFloor = new JTextField();
-		JTextField textDestinationFloor = new JTextField();
-		JButton buttonSubmit = new JButton("Create Passenger");
+		textCurrentFloor = new JTextField();
+		textDestinationFloor = new JTextField();
+		buttonSubmit = new JButton("Create Passenger");
 		
 		panel.add(labelCurrentFloor);
 		panel.add(textCurrentFloor);
@@ -40,11 +44,21 @@ public class ElevatorView {
 		panel.add(textDestinationFloor);
 		panel.add(buttonSubmit);
 		
+		setActionListener();
+		
+		frame.setContentPane(panel);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(100, 150));
+        frame.pack();
+		frame.setVisible(true);
+	}
+	
+	private void setActionListener() {
 		buttonSubmit.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				
+				elevatorController.addNewPassengerIntoWaitingQueue(createNewPassenger(textCurrentFloor.getText(), textDestinationFloor.getText()));
 			}
 		});
 	}

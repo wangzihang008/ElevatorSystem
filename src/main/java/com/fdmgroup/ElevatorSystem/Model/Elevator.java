@@ -55,8 +55,8 @@ public class Elevator implements Runnable{
 		person.setIsWaiting(false);
 	}
 	
-	public void deliverPassager() {
-		people.peek();
+	public Person deliverPassager() {
+		return people.poll();
 	}
 	
 	public boolean isFull() {
