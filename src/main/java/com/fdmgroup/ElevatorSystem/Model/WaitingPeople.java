@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -36,7 +37,7 @@ public class WaitingPeople {
 		super();
 		waitingPeople = new HashMap<Elevator, Queue<Person>>();
 		for(Elevator e : elevators) {
-			waitingPeople.put(e, new LinkedBlockingQueue<Person>());
+			waitingPeople.put(e, new PriorityQueue<Person>(new PeopleWaitingComparator()));
 		}
 		this.elevators = elevators;
 	}
@@ -109,6 +110,10 @@ public class WaitingPeople {
 			}
 		}
 		waitingPeople.get(select).add(person);
+	}
+	
+	public void removeWaitingPerson(Elevator elevator, Person person) {
+		waitingPeople.get(elevator).remove(person);
 	}
 
 	

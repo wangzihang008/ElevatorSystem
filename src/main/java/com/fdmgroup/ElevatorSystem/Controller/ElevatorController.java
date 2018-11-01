@@ -35,6 +35,7 @@ public class ElevatorController {
 			t.start();
 		}
 		
+		waitingPeople.setElevators(elevators);
 		
 	}
 	
