@@ -2,7 +2,7 @@ package com.fdmgroup.ElevatorSystem.Model;
 
 public enum State {
 	
-	SEEDPUP(1), SLOWDOWN(1), MOVE(1), SERVICE(2), STOP(0);
+	SPEEDUP(1), SLOWDOWN(1), MOVE(1), SERVICE(2), STOP(0);
 	
 	private int time;
 	
