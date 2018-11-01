@@ -19,7 +19,7 @@ public class ElevatorTest {
 	public void setup() {
 		ArrayList<Elevator> elevators = new ArrayList<Elevator>();
 		waitingPeople = new WaitingPeople(elevators);
-		elevator = new Elevator(10, waitingPeople);
+		elevator = new Elevator(10);
 		elevators.add(elevator);
 	}
 	
@@ -93,5 +93,10 @@ public class ElevatorTest {
 		elevator.deliverPassager();
 		// Assert
 		assertEquals(null, elevator.deliverPassager());
+	}
+	
+	@Test
+	public void test_() {
+		
 	}
 }

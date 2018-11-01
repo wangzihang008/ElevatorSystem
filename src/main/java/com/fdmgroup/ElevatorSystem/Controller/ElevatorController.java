@@ -1,7 +1,12 @@
 package com.fdmgroup.ElevatorSystem.Controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -23,23 +28,19 @@ public class ElevatorController {
 		elevators = new ArrayList<Elevator>();
 		elevatorThreads = new ArrayList<Thread>();
 		elevatorWiew = new ElevatorView(this);
-		waitingPeople = new WaitingPeople(elevators);
+		
 		
 		for(int i = 0; i < numElevator; i++) {
-			Elevator e = new Elevator(elevatorLimit, waitingPeople);
+			Elevator e = new Elevator(elevatorLimit);
 			e.setName("Elevator" + (i + 1));
+			e.setWaitingPeople(waitingPeople);
 			Thread t = new Thread(e);
 			elevators.add(e);
 			elevatorThreads.add(t);
-			
-			t.start();
 		}
 		
-		waitingPeople.setElevators(elevators);
-		
+		waitingPeople = new WaitingPeople(elevators);
 	}
-	
-	
 	
 	public void addNewPassenger(Person person) {
 		if(person.getStartFloor() > 0 && person.getDestinationFloor() <= totalFloor) {
@@ -78,4 +79,49 @@ public class ElevatorController {
 //		}
 //	}
 //	
+	
+	public Map<Map<Elevator, Queue<Person>>, Integer> findBestArrangement(List<Map<Elevator, Queue<Person>>> allPossibility) {
+		
+		Map<Map<Elevator, Queue<Person>>, Integer> result = new HashMap<Map<Elevator, Queue<Person>>, Integer>();
+		Map<Elevator, Queue<Person>> bestMap = allPossibility.get(0);
+		int minTimeAmongAllPossibility = 2147483647;
+		for (Map<Elevator, Queue<Person>> m : allPossibility) {
+			
+			Set<Elevator> keySet = m.keySet();
+			Iterator<Elevator> keyIter = keySet.iterator();
+			int maxTimeAmongELevators = 0;
+			while (keyIter.hasNext()) {
+				
+				Elevator elevatorToCalculate = keyIter.next();
+				int runTime = elevatorToCalculate.calculateTime(m.get(elevatorToCalculate));
+				if (runTime > maxTimeAmongELevators) {
+					
+					maxTimeAmongELevators = runTime;
+				}
+			}
+			int time = maxTimeAmongELevators;
+			if (time < minTimeAmongAllPossibility) {
+				
+				minTimeAmongAllPossibility = time;
+				bestMap = m;
+			}
+		}
+		result.put(bestMap, minTimeAmongAllPossibility);
+		
+		return result;
+	}
+	
+	public void putPersonIntoElevators(Map<Elevator, Queue<Person>> bestMap) {
+		
+		for (Elevator e : elevators) {
+			
+			e.setPeople(bestMap.get(e));
+		}
+	}
+	
+	public void startThreads() {
+		for(Thread t : elevatorThreads) {
+			t.start();
+		}
+	}
 }
