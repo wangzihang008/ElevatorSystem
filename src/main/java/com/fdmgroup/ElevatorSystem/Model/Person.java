@@ -2,6 +2,7 @@ package com.fdmgroup.ElevatorSystem.Model;
 
 public class Person {
 	
+	private String name;
 	private int startFloor;
 	private int destinationFloor;
 	private boolean isWaiting;
@@ -11,6 +12,14 @@ public class Person {
 		this.startFloor = startFloor;
 		this.destinationFloor = destinationFloor;
 		isWaiting = true;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public int getStartFloor() {
@@ -29,8 +38,11 @@ public class Person {
 	}
 	
 	public void setIsWaiting(boolean isWaiting) {
-		
 		this.isWaiting = isWaiting;
+	}
+	
+	public boolean isGoingUp() {
+		return destinationFloor - startFloor > 0;
 	}
 	
 	public int getFloorsToGo() {

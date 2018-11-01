@@ -3,6 +3,8 @@ package com.fdmgroup.ElevatorSystem.Controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import com.fdmgroup.ElevatorSystem.Model.Elevator;
 import com.fdmgroup.ElevatorSystem.Model.Person;
 import com.fdmgroup.ElevatorSystem.Model.State;
@@ -21,9 +23,10 @@ public class ElevatorController {
 		elevators = new ArrayList<Elevator>();
 		elevatorThreads = new ArrayList<Thread>();
 		elevatorWiew = new ElevatorView(this);
+		waitingPeople = new WaitingPeople(elevators);
 		
 		for(int i = 0; i < numElevator; i++) {
-			Elevator e = new Elevator(elevatorLimit);
+			Elevator e = new Elevator(elevatorLimit, waitingPeople);
 			e.setName("Elevator" + (i + 1));
 			Thread t = new Thread(e);
 			elevators.add(e);
@@ -32,45 +35,46 @@ public class ElevatorController {
 			t.start();
 		}
 		
-		waitingPeople = new WaitingPeople(elevators);
-	}
-	
-	public Elevator getEmptyElevator() {
-		for(Elevator e : elevators) {
-			if(e.getPeople().isEmpty()) {
-				return e;
-			}
-		}
-		return null;
-	}
-	
-	public void addNewPassenger(Person person) {
 		
 	}
-
-	public void addNewPassengerIntoWaitingQueue(Person person) {
-		int min = 0;
-		Elevator elevator = elevators.get(0);
-		if(getEmptyElevator() != null) {
-			for(Elevator e : elevators) {
-				if(e.isEmpty()) {
-					if(e.getCurrentFloor() - person.getStartFloor() == 0) {
-						if(min == 0) {
-							min = State.SPEEDUP.getTime() + State.SLOWDOWN.getTime() +
-									State.SERVICE.getTime() + person.getFloorsToGo();
-						}else if(min > 0 && min > State.SPEEDUP.getTime() + State.SLOWDOWN.getTime() +
-								State.SERVICE.getTime() + person.getFloorsToGo()) {
-							min = State.SPEEDUP.getTime() + State.SLOWDOWN.getTime() +
-									State.SERVICE.getTime() + person.getFloorsToGo();
-						}
-					}
-				}else {
-					
-				}
-			}
+	
+	
+	
+	public void addNewPassenger(Person person) {
+		if(person.getStartFloor() > 0 && person.getDestinationFloor() <= totalFloor) {
+			waitingPeople.addNewPassenger(person);
 		}else {
-			
+			JOptionPane.showMessageDialog(
+					null, 
+					"Invalid Input", 
+					"Information of New Passenger is Invalid! Please Input Again.", 
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	
+
+//	public void addNewPassengerIntoWaitingQueue(Person person) {
+//		int min = 0;
+//		Elevator elevator = elevators.get(0);
+//		if(getEmptyElevator() != null) {
+//			for(Elevator e : elevators) {
+//				if(e.isEmpty()) {
+//					if(e.getCurrentFloor() - person.getStartFloor() == 0) {
+//						if(min == 0) {
+//							min = State.SPEEDUP.getTime() + State.SLOWDOWN.getTime() +
+//									State.SERVICE.getTime() + person.getFloorsToGo();
+//						}else if(min > 0 && min > State.SPEEDUP.getTime() + State.SLOWDOWN.getTime() +
+//								State.SERVICE.getTime() + person.getFloorsToGo()) {
+//							min = State.SPEEDUP.getTime() + State.SLOWDOWN.getTime() +
+//									State.SERVICE.getTime() + person.getFloorsToGo();
+//						}
+//					}
+//				}else {
+//					
+//				}
+//			}
+//		}else {
+//			
+//		}
+//	}
+//	
 }
