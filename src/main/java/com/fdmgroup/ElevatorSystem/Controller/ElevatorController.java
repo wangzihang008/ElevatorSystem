@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JOptionPane;
 
@@ -84,12 +85,63 @@ public class ElevatorController {
 //	}
 //	
 	
-	public Map<Map<Elevator, Queue<Person>>, Integer> findBestArrangement(List<Map<Elevator, Queue<Person>>> allPossibility) {
+	// Create method to return all possible combinations of distributing waitingPeople to each elevator
+    public ArrayList<HashMap<Elevator, Queue<Person>>> solve(int currentIndex, int emptyCount, WaitingPeople wp, int[] result, int[] counter) {
+    	
+        ArrayList<HashMap<Elevator, Queue<Person>>> mylist = new ArrayList<HashMap<Elevator, Queue<Person>>>();
+    	
+    	if (currentIndex < emptyCount - 1) {
+        	return null;
+        }
+
+        if (currentIndex == -1) {
+            for (int i = 0; i < result.length; i++) {
+            	HashMap<Elevator, Queue<Person>> tmp = new HashMap<Elevator, Queue<Person>>();
+            	Queue<Person> myqueue = new LinkedBlockingQueue<Person>();
+            	// Logic to enumerate all combinations and separate to different maps
+            	if (i == 0) {
+            		while (! tmp.containsKey(wp.getElevators().get(result[i]))) {
+            			tmp.put(wp.getElevators().get(result[i]), myqueue);
+            		}
+            		//System.out.println(tmp.keySet() + " " + tmp.values());
+            		
+            		tmp.get(wp.getElevators().get(result[i])).add((Person) wp.getQueue().get(i));
+            		//System.out.println(tmp.keySet() + " " + tmp.values());
+            		mylist.add(tmp);
+            		//System.out.println(wp.getWaitingPeople(i) + " " + elevator.get(result[i]).getName());
+            	} else {
+            		while (! tmp.containsKey(wp.getElevators().get(result[i]))) {
+            			tmp.put(wp.getElevators().get(result[i]), myqueue);
+            		}
+            		
+            		tmp.get(wp.getElevators().get(result[i])).add((Person) wp.getQueue().get(i));
+            		//System.out.println(tmp.keySet() + " " + tmp.values());
+            	}
+            }
+           	return mylist;
+        }
+        
+        for (int i = 0; i < wp.getElevators().size(); i++) {
+			counter[i]++;
+            result[currentIndex] = i;
+
+            if (counter[i] == 1)
+                solve(currentIndex - 1, emptyCount - 1, wp, result, counter);
+            else
+                solve(currentIndex - 1, emptyCount, wp, result, counter);
+            
+            counter[i]--;
+        }
+		return mylist;
+		
+    }
+	
+	public Map<Map<Elevator, Queue<Person>>, Integer> findBestArrangement(ArrayList<HashMap<Elevator, Queue<Person>>> mylist) {
 		
 		Map<Map<Elevator, Queue<Person>>, Integer> result = new HashMap<Map<Elevator, Queue<Person>>, Integer>();
-		Map<Elevator, Queue<Person>> bestMap = allPossibility.get(0);
+		Map<Elevator, Queue<Person>> bestMap = mylist.get(0);
 		int minTimeAmongAllPossibility = 2147483647;
-		for (Map<Elevator, Queue<Person>> m : allPossibility) {
+		for (Map<Elevator, Queue<Person>> m : mylist) {
 			
 			Set<Elevator> keySet = m.keySet();
 			Iterator<Elevator> keyIter = keySet.iterator();

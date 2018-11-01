@@ -81,7 +81,7 @@ public class ElevatorTest {
 		elevator.pickPassenger(person2);
 		
 		// Assert
-		assertEquals(person, elevator.deliverPassager());
+		assertEquals(person, elevator.deliverPassenger());
 		assertEquals(3, elevator.getPeople().peek().getStartFloor());
 	}
 	
@@ -90,8 +90,8 @@ public class ElevatorTest {
 		// Arrange
 		
 		// Act
-		elevator.deliverPassager();
+		elevator.deliverPassenger();
 		// Assert
-		assertEquals(null, elevator.deliverPassager());
+		assertEquals(null, elevator.deliverPassenger());
 	}
 }

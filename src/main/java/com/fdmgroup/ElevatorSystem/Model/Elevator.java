@@ -57,7 +57,7 @@ public class Elevator implements Runnable{
 		person.setIsWaiting(false);
 	}
 	
-	public Person deliverPassager() {
+	public Person deliverPassenger() {
 		return people.poll();
 	}
 	

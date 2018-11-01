@@ -1,5 +1,7 @@
 package com.fdmgroup.ElevatorSystem.Model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -126,13 +128,24 @@ public class WaitingPeople {
 		return result;
 	}
 	
-	public Object getValues() {
-		return waitingPeople.values();
+	// This method stores people currently in the waitingPeople map into a queue
+	public List<Person> getQueue() {
+		List<Person> myqueue = new ArrayList<Person>();
+		for (Queue<Person> queue: waitingPeople.values()) {
+		    Iterator<Person> iterator = queue.iterator();
+		    while(iterator.hasNext()) {
+		    	myqueue.add(iterator.next());
+		    }
+		}
+		return myqueue;
 	}
 	
-	public int sizeValues() {
-		return 0;
-		
+	public int getSize() {
+		int size = 0;
+		for (Queue<Person> queue: waitingPeople.values()) {
+		    size += queue.size();
+		}
+		return size;
 	}
 
 }

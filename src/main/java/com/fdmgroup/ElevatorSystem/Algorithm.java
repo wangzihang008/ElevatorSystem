@@ -3,55 +3,63 @@ package com.fdmgroup.ElevatorSystem;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.fdmgroup.ElevatorSystem.Model.Elevator;
 import com.fdmgroup.ElevatorSystem.Model.Person;
 import com.fdmgroup.ElevatorSystem.Model.WaitingPeople;
 
 public class Algorithm {
-/*
+
 	public static void main(String[] args) {
 		Date time = new Date();
 		long t1 = time.getTime();
         
-		Person p1 = new Person(1,24);
+		ArrayList<Elevator> elevators_flag = new ArrayList<Elevator>();
+		WaitingPeople flag = new WaitingPeople(elevators_flag);
+		Elevator e1 = new Elevator(10, flag);
+        Elevator e2 = new Elevator(20, flag);
+        Elevator e3 = new Elevator(15, flag);
+        e1.setName("first");
+        e2.setName("second");
+        e3.setName("third");
+        
+        Person p1 = new Person(1,24);
         Person p2 = new Person(3,5);
         Person p3 = new Person(4,9);
         Person p4 = new Person(5, 16);
-        WaitingPeople wp = new WaitingPeople();
-        wp.add(p1);
-        wp.add(p2);
-        wp.add(p3);
-        wp.add(p4);
-        wp.add(p1);
+        e1.pickPassenger(p1);
         
-        Elevator e1 = new Elevator(2);
-        Elevator e2 = new Elevator(4);
-        Elevator e3 = new Elevator(6);
-        e1.setName("first");
-        e2.setName("second");
         ArrayList<Elevator> elevators = new ArrayList<Elevator>();
         elevators.add(e1);
         elevators.add(e2);
         elevators.add(e3);
-        //HashMap<Elevator, WaitingPeople> result = new HashMap<Elevator, WaitingPeople>();
-        int[] result = new int[wp.size()];
-        int[] counter = new int[elevators.size()];
+        WaitingPeople wp = new WaitingPeople(elevators);
+        wp.addNewPassenger(p2);
+        wp.addNewPassenger(p3);
+        wp.addNewPassenger(p4);
+        wp.setElevators(elevators);
         
-        ArrayList<HashMap<Elevator, WaitingPeople>> mylist = solve(wp.size() - 1, elevators.size(), elevators, wp, result, counter);
-        System.out.println(mylist);
+        //System.out.println(wp.getWaitingPeople());
+        
+        int[] result = new int[wp.getSize()];
+        int[] counter = new int[wp.getElevators().size()];
+        
+        ArrayList<HashMap<Elevator, Queue<Person>>> mylist = solve(wp.getSize() - 1, wp.getElevators().size(), wp, result, counter);
+        System.out.println(mylist.size());
         long t2 = time.getTime();
         System.out.println(t1);
         System.out.println(t2);
     }
 			
 	// Create method to return all possible combinations of distributing waitingPeople to each elevator
-    public static ArrayList<HashMap<Elevator, WaitingPeople>> solve(int currentIndex, int emptyCount, 
-    		ArrayList<Elevator> elevator, WaitingPeople wp, int[] result, int[] counter) {
+    public static ArrayList<HashMap<Elevator, Queue<Person>>> solve(int currentIndex, int emptyCount, WaitingPeople wp, int[] result, int[] counter) {
     	
-        ArrayList<HashMap<Elevator, WaitingPeople>> mylist = new ArrayList<HashMap<Elevator, WaitingPeople>>();
+        ArrayList<HashMap<Elevator, Queue<Person>>> mylist = new ArrayList<HashMap<Elevator, Queue<Person>>>();
     	
     	if (currentIndex < emptyCount - 1) {
         	return null;
@@ -59,54 +67,46 @@ public class Algorithm {
 
         if (currentIndex == -1) {
             for (int i = 0; i < result.length; i++) {
-            	WaitingPeople tmp = new WaitingPeople();
-            	HashMap<Elevator, WaitingPeople> map = new HashMap<>();
-                //map.put(elevator.get(result[i]), wp.getWaitingPeople(i));
+            	HashMap<Elevator, Queue<Person>> tmp = new HashMap<Elevator, Queue<Person>>();
+            	Queue<Person> myqueue = new LinkedBlockingQueue<Person>();
+            	// Logic to enumerate all combinations and separate to different maps
             	if (i == 0) {
-            		while (! map.containsKey(elevator.get(result[i]))) {
-            			map.put(elevator.get(result[i]), tmp);
+            		while (! tmp.containsKey(wp.getElevators().get(result[i]))) {
+            			tmp.put(wp.getElevators().get(result[i]), myqueue);
             		}
-            		System.out.println(map.keySet() + " " + map.values());
-            		map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
-            		//map.put(elevator.get(result[i]),tmp);
-            		//map.put(elevator.get(result[i]), wp.getWaitingPeople(i));
+            		//System.out.println(tmp.keySet() + " " + tmp.values());
             		
-            		System.out.println();
-            		mylist.add(map);
+            		tmp.get(wp.getElevators().get(result[i])).add((Person) wp.getQueue().get(i));
+            		System.out.println(tmp.keySet() + " " + tmp.values());
+            		mylist.add(tmp);
             		//System.out.println(wp.getWaitingPeople(i) + " " + elevator.get(result[i]).getName());
             	} else {
             		//tmp.add(wp.getWaitingPeople(i));
-            		while (! map.containsKey(elevator.get(result[i]))) {
-            			map.put(elevator.get(result[i]), tmp);
+            		while (! tmp.containsKey(wp.getElevators().get(result[i]))) {
+            			tmp.put(wp.getElevators().get(result[i]), myqueue);
             		}
-            		System.out.println(map.keySet() + " " + map.values());
-            		map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
-            		/*if (! map.containsKey(elevator.get(result[i]))) {
-            			map.put(elevator.get(result[i]), null);
-            			map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
-            		}
-            		else{
-            			map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
-            		}
-            		//map.put(elevator.get(result[i]), wp.getWaitingPeople(i));
+            		
+            		tmp.get(wp.getElevators().get(result[i])).add((Person) wp.getQueue().get(i));
+            		System.out.println(tmp.keySet() + " " + tmp.values());
             	}
             }
+            //System.out.println();
            	return mylist;
         }
         
-        for (int i = 0; i < elevator.size(); i++) {
+        for (int i = 0; i < wp.getElevators().size(); i++) {
 			counter[i]++;
             result[currentIndex] = i;
 
             if (counter[i] == 1)
-                solve(currentIndex - 1, emptyCount - 1, elevator, wp, result, counter);
+                solve(currentIndex - 1, emptyCount - 1, wp, result, counter);
             else
-                solve(currentIndex - 1, emptyCount, elevator, wp, result, counter);
+                solve(currentIndex - 1, emptyCount, wp, result, counter);
             
             counter[i]--;
         }
+        //System.out.println(mylist.size());
 		return mylist;
 		
     }
-	*/
 }
