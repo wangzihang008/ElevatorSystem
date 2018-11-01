@@ -2,6 +2,8 @@ package com.fdmgroup.ElevatorSystem;
 
 import static org.junit.Assert.assertEquals;
 
+import static org.mockito.Mockito.*;
+
 import java.util.ArrayList;
 
 import org.junit.Before;
@@ -18,9 +20,10 @@ public class ElevatorTest {
 	@Before
 	public void setup() {
 		ArrayList<Elevator> elevators = new ArrayList<Elevator>();
-		waitingPeople = new WaitingPeople(elevators);
 		elevator = new Elevator(10);
 		elevators.add(elevator);
+		waitingPeople = new WaitingPeople(elevators);
+//		elevator.setWaitingPeople(waitingPeople);
 	}
 	
 	@Test
@@ -96,7 +99,56 @@ public class ElevatorTest {
 	}
 	
 	@Test
-	public void test_() {
+	public void test_isEmpty_0_person_return_true() {
+		// Arrange
+		
+		// Act
+		
+		// Assert
+		assertEquals(true, elevator.isEmpty());
+	}
+	
+	@Test
+	public void test_isEmpty_1_person_return_false() {
+		// Arrange
+		Person person = new Person(2, 4);
+		// Act
+		elevator.pickPassenger(person);
+		// Assert
+		assertEquals(false, elevator.isEmpty());
+	}
+	
+	@Test
+	public void test_goUp_once_from0To1() {
+		// Arrange
+		
+		// Act
+		elevator.goUp();
+		// Assert
+		assertEquals(1, elevator.getCurrentFloor());
+	}
+	
+	@Test
+	public void test_goDown_once_from1To0() {
+		// Arrange
+		
+		// Act
+		elevator.goUp();
+		elevator.goDown();
+		// Assert
+		assertEquals(1, elevator.getCurrentFloor());
+	}
+	
+	@Test
+	public void test_peopleOutOfEevator_1person() {
+		// Arrange
+		Person person = new Person(1, 4);
+		// Act
+		Elevator e = mock(Elevator.class);
+		e.pickPassenger(person);
+		// Assert
 		
 	}
+	
+	
 }
