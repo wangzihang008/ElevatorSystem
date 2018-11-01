@@ -2,18 +2,25 @@ package com.fdmgroup.ElevatorSystem;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.fdmgroup.ElevatorSystem.Model.Elevator;
 import com.fdmgroup.ElevatorSystem.Model.Person;
+import com.fdmgroup.ElevatorSystem.Model.WaitingPeople;
 
 public class ElevatorTest {
 	private Elevator elevator;
+	private WaitingPeople waitingPeople;
 	
 	@Before
 	public void setup() {
-		elevator = new Elevator(10);
+		ArrayList<Elevator> elevators = new ArrayList<Elevator>();
+		waitingPeople = new WaitingPeople(elevators);
+		elevator = new Elevator(10, waitingPeople);
+		
 	}
 	
 	@Test

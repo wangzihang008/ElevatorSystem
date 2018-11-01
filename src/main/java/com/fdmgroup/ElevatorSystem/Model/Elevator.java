@@ -1,5 +1,7 @@
 package com.fdmgroup.ElevatorSystem.Model;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -13,6 +15,7 @@ public class Elevator implements Runnable{
 	private Queue<Person> people;
 	private State state;
 	private int max;
+	private WaitingPeople waitingPeople;
 	private Logger log = LogManager.getLogger(Elevator.class);
 	
 	public int getMax() {
@@ -62,13 +65,20 @@ public class Elevator implements Runnable{
 		return max == people.size();
 	}
 	
-	public Elevator(int max) {
+	public boolean isEmpty() {
+		return people.size() < 1;
+	}
+	
+	public Elevator() {}
+	
+	public Elevator(int max, WaitingPeople waitingPeople) {
 		super();
 		isUp = true;
 		currentFloor = 0;
 		people = new LinkedBlockingQueue<Person>();
 		state = State.STOP;
 		this.max = max;
+		this.waitingPeople = waitingPeople;
 	}
 	
 	public void goUp() {
@@ -104,6 +114,34 @@ public class Elevator implements Runnable{
 		
 		state = State.SLOWDOWN;
 	}
+	
+	public int getLastPassengerDestinationFloor() {
+		Iterator<Person> iterator = people.iterator();
+		if(iterator.hasNext()) {
+			Person lastPerson = iterator.next();
+			while(iterator.hasNext()) {
+				lastPerson = iterator.next();
+			}
+			return lastPerson.getDestinationFloor();
+		}
+		return getCurrentFloor();
+	}
+	
+	public static int getPickUpTime(int currentFloor, Person person) {
+		int result = 0;
+		
+		if(currentFloor != person.getStartFloor()) {
+			result = 2 + getNumFloorToGo(currentFloor, person);
+		}
+		
+		return result;
+	}
+	
+	public static int getNumFloorToGo(int currentFloor, Person person) {
+		return currentFloor - person.getStartFloor() > 0 ? 
+				currentFloor - person.getStartFloor() : person.getStartFloor() - currentFloor;
+	}
+	
 	
 	public int calculateTime(Queue<Person> people) {
 		
@@ -186,13 +224,72 @@ public class Elevator implements Runnable{
 	}
 	
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + currentFloor;
+		result = prime * result + (isUp ? 1231 : 1237);
+		result = prime * result + max;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((people == null) ? 0 : people.hashCode());
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((waitingPeople == null) ? 0 : waitingPeople.hashCode());
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Elevator other = (Elevator) obj;
+		if (currentFloor != other.currentFloor)
+			return false;
+		if (isUp != other.isUp)
+			return false;
+		if (max != other.max)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (people == null) {
+			if (other.people != null)
+				return false;
+		} else if (!people.equals(other.people))
+			return false;
+		if (state != other.state)
+			return false;
+		if (waitingPeople == null) {
+			if (other.waitingPeople != null)
+				return false;
+		} else if (!waitingPeople.equals(other.waitingPeople))
+			return false;
+		return true;
+	}
+	
+	@Override
 	public String toString() {
 		String result = name + " is at Level " + currentFloor + ". ";
-		result += "There are " + people.size() + " in this elevator. ";
-		if(isUp) {
-			result += "It is going up. "; 
-		}else {
-			result += "It is going down. "; 
+		result += "There are " + people.size() + " people in this elevator. ";
+		if(state == State.MOVE) {
+			if(isUp) {
+				result += "It is going up. "; 
+			}else {
+				result += "It is going down. "; 
+			}
+		}else if(state == State.SERVICE) {
+			result += "It is servicing. "; 
+		}else if(state == State.STOP) {
+			result += "It stop. "; 
+		}else if(state == State.SLOWDOWN) {
+			result += "It is slowing down. "; 
+		}else if(state == State.SPEEDUP) {
+			result += "It is speeding up. "; 
 		}
 		
 		return result;
@@ -213,4 +310,5 @@ public class Elevator implements Runnable{
 			}
 		}
 	}
+
 }
