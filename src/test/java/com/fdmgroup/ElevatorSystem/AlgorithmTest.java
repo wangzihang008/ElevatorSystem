@@ -21,8 +21,6 @@ public class AlgorithmTest {
 		WaitingPeople wp = new WaitingPeople();
 		Algorithm al = new Algorithm();
 		//al.solve(wp.size(), 2);
-		
-		assertEquals(2, wp.size());
 	}
 
 }

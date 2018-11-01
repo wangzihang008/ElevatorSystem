@@ -5,17 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 public class WaitingPeople {
-
 	private Map<Elevator, Object> waitingPeople;
 
 	public Map<Elevator, Object> getWaitingPeople() {
 		return waitingPeople;
 	}
-	
-	public Object getWaitingPeople(int i) {
-		return waitingPeople.get(i);
-	}
-
 
 	public void setWaitingPeople(Map<Elevator, Object> waitingPeople) {
 		this.waitingPeople = waitingPeople;
@@ -30,4 +24,13 @@ public class WaitingPeople {
 		waitingPeople = new HashMap<Elevator, Object>();
 	}
 	
+	public Object getValues() {
+		return waitingPeople.values();
+	}
+	
+	public int sizeValues() {
+		return 0;
+		
+	}
+
 }

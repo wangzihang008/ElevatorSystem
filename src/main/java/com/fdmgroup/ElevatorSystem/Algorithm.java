@@ -30,7 +30,9 @@ public class Algorithm {
         Elevator e1 = new Elevator(2);
         Elevator e2 = new Elevator(4);
         Elevator e3 = new Elevator(6);
-        ArrayList<Elevator> elevators = new ArrayList<>();
+        e1.setName("first");
+        e2.setName("second");
+        ArrayList<Elevator> elevators = new ArrayList<Elevator>();
         elevators.add(e1);
         elevators.add(e2);
         elevators.add(e3);
@@ -39,12 +41,13 @@ public class Algorithm {
         int[] counter = new int[elevators.size()];
         
         ArrayList<HashMap<Elevator, WaitingPeople>> mylist = solve(wp.size() - 1, elevators.size(), elevators, wp, result, counter);
-        System.out.println(mylist.size());
+        System.out.println(mylist);
         long t2 = time.getTime();
         System.out.println(t1);
         System.out.println(t2);
     }
 			
+	// Create method to return all possible combinations of distributing waitingPeople to each elevator
     public static ArrayList<HashMap<Elevator, WaitingPeople>> solve(int currentIndex, int emptyCount, 
     		ArrayList<Elevator> elevator, WaitingPeople wp, int[] result, int[] counter) {
     	
@@ -56,22 +59,29 @@ public class Algorithm {
 
         if (currentIndex == -1) {
             for (int i = 0; i < result.length; i++) {
+            	WaitingPeople tmp = new WaitingPeople();
             	HashMap<Elevator, WaitingPeople> map = new HashMap<>();
                 //map.put(elevator.get(result[i]), wp.getWaitingPeople(i));
             	if (i == 0) {
-            		if (! map.containsKey(elevator.get(result[i]))) {
-            			map.put(elevator.get(result[i]), null);
-            			map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
+            		while (! map.containsKey(elevator.get(result[i]))) {
+            			map.put(elevator.get(result[i]), tmp);
             		}
-            		else{
-            			map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
-            		}
+            		System.out.println(map.keySet() + " " + map.values());
+            		map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
+            		//map.put(elevator.get(result[i]),tmp);
             		//map.put(elevator.get(result[i]), wp.getWaitingPeople(i));
-            		//System.out.println();
+            		
+            		System.out.println();
             		mylist.add(map);
-            		//System.out.println(wp.getWaitingPeople(i) + " " + result[i]);
+            		//System.out.println(wp.getWaitingPeople(i) + " " + elevator.get(result[i]).getName());
             	} else {
-            		if (! map.containsKey(elevator.get(result[i]))) {
+            		//tmp.add(wp.getWaitingPeople(i));
+            		while (! map.containsKey(elevator.get(result[i]))) {
+            			map.put(elevator.get(result[i]), tmp);
+            		}
+            		System.out.println(map.keySet() + " " + map.values());
+            		map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
+            		/*if (! map.containsKey(elevator.get(result[i]))) {
             			map.put(elevator.get(result[i]), null);
             			map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
             		}
@@ -79,7 +89,6 @@ public class Algorithm {
             			map.get(elevator.get(result[i])).add(wp.getWaitingPeople(i));
             		}
             		//map.put(elevator.get(result[i]), wp.getWaitingPeople(i));
-            		//System.out.println(wp.getWaitingPeople(i) + " " + result[i]);
             	}
             }
            	return mylist;
