@@ -14,6 +14,14 @@ public class WaitingPeople {
 	private List<Elevator> elevators;
 	private List<Person> waitingPeopleForElevatorAviliable;
 
+	public List<Person> getWaitingPeopleForElevatorAviliable() {
+		return waitingPeopleForElevatorAviliable;
+	}
+
+	public void setWaitingPeopleForElevatorAviliable(List<Person> waitingPeopleForElevatorAviliable) {
+		this.waitingPeopleForElevatorAviliable = waitingPeopleForElevatorAviliable;
+	}
+
 	public List<Elevator> getElevators() {
 		return elevators;
 	}
@@ -32,6 +40,10 @@ public class WaitingPeople {
 	
 	public void putWaitingQueue(Elevator elevator, Queue<Person> list) {
 		waitingPeople.put(elevator.getName(), list);
+	}
+	
+	public void addWaitingPersonIntoQueue(Elevator elevator, Person person) {
+		waitingPeople.get(elevator.getName()).add(person);
 	}
 
 	public WaitingPeople(List<Elevator> elevators) {
@@ -77,52 +89,56 @@ public class WaitingPeople {
 		Elevator select = null;
 		int time = -1;
 		for(Elevator e : elevators) {
-			if(e.isUp() == person.isGoingUp()) {
-				if(select == null) {
-					select = e;
-					time = 1 + Elevator.getPickUpTime(e.getCurrentFloor(), person);
-				}else if(person.isGoingUp()) {
-					if(e.getCurrentFloor() < person.getStartFloor()) {
-						if(time > Elevator.getPickUpTime(e.getCurrentFloor(), person)) {
-							time = Elevator.getPickUpTime(e.getCurrentFloor(), person);
-							select = e;
-						}
-					}
-				}else {
-					if(e.getCurrentFloor() > person.getStartFloor()) {
-						if(time > Elevator.getPickUpTime(e.getCurrentFloor(), person)) {
-							time = Elevator.getPickUpTime(e.getCurrentFloor(), person);
-							select = e;
-						}
-					}
-				}
-			}else {
-				if(select == null) {
-					select = e;
-					time = 1 + e.calculateTime(e.getPeople()) + 
-							Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person);
-				}else {
-					int timeOpposite = e.calculateTime(e.getPeople()) + 
-							Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person);
-					if(time > timeOpposite) {
-						time = timeOpposite;
+			if(!e.isFull()) {
+				if(e.isUp() == person.isGoingUp()) {
+					if(select == null) {
 						select = e;
+						time = 1 + Elevator.getPickUpTime(e.getCurrentFloor(), person);
+					}else if(person.isGoingUp()) {
+						if(e.getCurrentFloor() < person.getStartFloor()) {
+							if(time > Elevator.getPickUpTime(e.getCurrentFloor(), person)) {
+								time = Elevator.getPickUpTime(e.getCurrentFloor(), person);
+								select = e;
+							}
+						}
+					}else {
+						if(e.getCurrentFloor() > person.getStartFloor()) {
+							if(time > Elevator.getPickUpTime(e.getCurrentFloor(), person)) {
+								time = Elevator.getPickUpTime(e.getCurrentFloor(), person);
+								select = e;
+							}
+						}
+					}
+				}else {
+					if(select == null) {
+						select = e;
+						time = 1 + e.calculateTime(e.getPeople()) + 
+								Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person);
+					}else {
+						int timeOpposite = e.calculateTime(e.getPeople()) + 
+								Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person);
+						if(time > timeOpposite) {
+							time = timeOpposite;
+							select = e;
+						}
 					}
 				}
 			}
 		}
 		if(select == null) {
 			for(Elevator e : elevators) {
-				if(select == null) {
-					select = e;
-					time = 1 + e.calculateTime(e.getPeople()) + 
-							Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person);
-				}else {
-					if(time > e.calculateTime(e.getPeople()) + 
-							Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person)) {
-						time = e.calculateTime(e.getPeople()) + 
-								Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person);
+				if(!e.isFull()) {
+					if(select == null) {
 						select = e;
+						time = 1 + e.calculateTime(e.getPeople()) + 
+								Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person);
+					}else {
+						if(time > e.calculateTime(e.getPeople()) + 
+								Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person)) {
+							time = e.calculateTime(e.getPeople()) + 
+									Elevator.getPickUpTime(e.getLastPassengerDestinationFloor(), person);
+							select = e;
+						}
 					}
 				}
 			}

@@ -129,6 +129,25 @@ public class Elevator implements Runnable{
 			for(Person p : peopleOutOfEevator()) {
 				people.remove(p);
 			}
+			if(waitingPeople.getWaitingPeopleForElevatorAviliable().size() > 0) {
+				Person p = null;
+				int num = -1;
+				for(Person person: waitingPeople.getWaitingPeopleForElevatorAviliable()) {
+					if(p == null) {
+						p = person;
+						num = calculateTime(getPeople()) + 
+								Elevator.getPickUpTime(getLastPassengerDestinationFloor(), person);
+					}else {
+						if(num > calculateTime(getPeople()) + 
+								Elevator.getPickUpTime(getLastPassengerDestinationFloor(), person)) {
+							num = calculateTime(getPeople()) + 
+									Elevator.getPickUpTime(getLastPassengerDestinationFloor(), person);
+							p = person;
+						}
+					}
+				}
+				waitingPeople.addWaitingPersonIntoQueue(this, p);
+			}
 		}
 
 		if(waitingPeople.peopleIntoElevator(this) != null) {
