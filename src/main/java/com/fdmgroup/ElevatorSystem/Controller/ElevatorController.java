@@ -28,23 +28,18 @@ public class ElevatorController {
 		elevators = new ArrayList<Elevator>();
 		elevatorThreads = new ArrayList<Thread>();
 		elevatorWiew = new ElevatorView(this);
-		waitingPeople = new WaitingPeople(elevators);
+		
 		
 		for(int i = 0; i < numElevator; i++) {
-			Elevator e = new Elevator(elevatorLimit, waitingPeople);
+			Elevator e = new Elevator(elevatorLimit);
 			e.setName("Elevator" + (i + 1));
+			e.setWaitingPeople(waitingPeople);
 			Thread t = new Thread(e);
 			elevators.add(e);
 			elevatorThreads.add(t);
-			
-			t.start();
 		}
-		
-		waitingPeople.setElevators(elevators);
-		
+		waitingPeople = new WaitingPeople(elevators);
 	}
-	
-	
 	
 	public void addNewPassenger(Person person) {
 		if(person.getStartFloor() > 0 && person.getDestinationFloor() <= totalFloor) {
@@ -57,7 +52,6 @@ public class ElevatorController {
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-
 
 //	public void addNewPassengerIntoWaitingQueue(Person person) {
 //		int min = 0;
@@ -124,5 +118,9 @@ public class ElevatorController {
 		}
 	}
 	
-	
+	public void startThreads() {
+		for(Thread t : elevatorThreads) {
+			t.start();
+		}
+	}
 }

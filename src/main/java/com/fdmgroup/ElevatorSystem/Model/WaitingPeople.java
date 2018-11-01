@@ -1,5 +1,6 @@
 package com.fdmgroup.ElevatorSystem.Model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,8 +10,9 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class WaitingPeople {
-	private Map<Elevator, Queue<Person>> waitingPeople;
+	private Map<String, Queue<Person>> waitingPeople;
 	private List<Elevator> elevators;
+	private List<Person> waitingPeopleForElevatorAviliable;
 
 	public List<Elevator> getElevators() {
 		return elevators;
@@ -20,25 +22,36 @@ public class WaitingPeople {
 		this.elevators = elevators;
 	}
 
-	public Map<Elevator, Queue<Person>> getWaitingPeople() {
+	public Map<String, Queue<Person>> getWaitingPeople() {
 		return waitingPeople;
 	}
 
-	public void setWaitingPeople(Map<Elevator, Queue<Person>> waitingPeople) {
+	public void setWaitingPeople(Map<String, Queue<Person>> waitingPeople) {
 		this.waitingPeople = waitingPeople;
 	}
 	
-	public void addWaitingQueue(Elevator elevator, Queue<Person> list) {
-		waitingPeople.put(elevator, list);
+	public void putWaitingQueue(Elevator elevator, Queue<Person> list) {
+		waitingPeople.put(elevator.getName(), list);
 	}
 
 	public WaitingPeople(List<Elevator> elevators) {
 		super();
-		waitingPeople = new HashMap<Elevator, Queue<Person>>();
+		waitingPeople = new HashMap<String, Queue<Person>>();
 		for(Elevator e : elevators) {
-			waitingPeople.put(e, new PriorityQueue<Person>(new PeopleWaitingComparator()));
+			waitingPeople.put(e.getName(), new PriorityQueue<Person>(new PeopleWaitingComparator()));
 		}
 		this.elevators = elevators;
+		waitingPeopleForElevatorAviliable = new ArrayList<Person>();
+		notifyAllElevator();
+	}
+	
+	public boolean isAllElevatorFull() {
+		for(Elevator e : elevators) {
+			if(!e.isFull()) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public Elevator getEmptyElevator() {
@@ -52,7 +65,13 @@ public class WaitingPeople {
 	
 	public void addNewPassenger(Person person) {
 		if(getEmptyElevator() != null) {
-			waitingPeople.get(getEmptyElevator()).add(person);
+			waitingPeople.get(getEmptyElevator().getName()).add(person);
+			notifyAllElevator();
+			return;
+		}
+		if(isAllElevatorFull()) {
+			waitingPeopleForElevatorAviliable.add(person);
+			notifyAllElevator();
 			return;
 		}
 		Elevator select = null;
@@ -108,20 +127,49 @@ public class WaitingPeople {
 				}
 			}
 		}
-		waitingPeople.get(select).add(person);
+		waitingPeople.get(select.getName()).add(person);
+		notifyAllElevator();
 	}
 	
 	public void removeWaitingPerson(Elevator elevator, Person person) {
-		waitingPeople.get(elevator).remove(person);
+		waitingPeople.get(elevator.getName()).remove(person);
+		notifyAllElevator();
+	}
+	
+	public void notifyAllElevator() {
+		for(Elevator e : elevators) {
+			e.setWaitingPeople(this);
+		}
 	}
 
+	public Person getFirstWaitingPerson(Elevator elevator) {
+		if(waitingPeople.get(elevator.getName()).isEmpty()) {
+			return null;
+		}
+		return waitingPeople.get(elevator.getName()).peek();
+	}
+	
+	public ArrayList<Person> peopleIntoElevator(Elevator elevator){
+		ArrayList<Person> ps = new ArrayList<Person>();
+		Iterator iterator = waitingPeople.get(elevator.getName()).iterator();
+		while(iterator.hasNext()) {
+			Person p = (Person) iterator.next();
+			if(p.getStartFloor() == elevator.getCurrentFloor()) {
+				ps.add(p);
+			}
+		}
+		if(ps.isEmpty()) {
+			return null;
+		}
+		return ps;
+ 	}
 	
 	@Override
 	public String toString() {
 		String result = "";
 		
 		for(Elevator e : elevators) {
-			Iterator<Person> iterator = waitingPeople.get(e).iterator();
+			Iterator<Person> iterator = waitingPeople.get(e.getName()).iterator();
 			if(iterator.hasNext()) {
 				Person p = iterator.next();
 				result += "Person ";

@@ -29,6 +29,6 @@ public class App
         ElevatorController elevatorController = 
         		new ElevatorController(Integer.parseInt(totalFloor), Integer.parseInt(numElevators), Integer.parseInt(elevatorLimit));
         
-
+        elevatorController.startThreads();
     }
 }
