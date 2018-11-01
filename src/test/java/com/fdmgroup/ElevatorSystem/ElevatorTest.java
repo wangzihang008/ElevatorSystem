@@ -20,7 +20,7 @@ public class ElevatorTest {
 		ArrayList<Elevator> elevators = new ArrayList<Elevator>();
 		waitingPeople = new WaitingPeople(elevators);
 		elevator = new Elevator(10, waitingPeople);
-		
+		elevators.add(elevator);
 	}
 	
 	@Test

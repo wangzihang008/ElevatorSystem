@@ -59,7 +59,7 @@ public class ElevatorView {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				
-//				elevatorController.addNewPassengerIntoWaitingQueue(createNewPassenger(textCurrentFloor.getText(), textDestinationFloor.getText()));
+				elevatorController.addNewPassenger(createNewPassenger(textCurrentFloor.getText(), textDestinationFloor.getText()));
 			}
 		});
 	}
