@@ -111,10 +111,6 @@ public class Elevator implements Runnable{
 			Person p = iterator.next();
 			if(p.getDestinationFloor() == currentFloor) {
 				ps.add(p);
-<<<<<<< HEAD
-				people.remove(p);
-=======
->>>>>>> DEVELOPEMENT
 			}
 		}
 		if(ps.isEmpty()) {
@@ -123,27 +119,10 @@ public class Elevator implements Runnable{
 		return ps;
 	}
 	
-<<<<<<< HEAD
-	private ArrayList<Person> peopleIntoElevator(){
-		ArrayList<Person> ps = new ArrayList<Person>();
-		Iterator iterator = waitingPeople.getWaitingPeople().get(this).iterator();
-		while(iterator.hasNext()) {
-			Person p = (Person) iterator.next();
-			if(p.getStartFloor() == currentFloor) {
-				ps.add(p);
-				waitingPeople.removeWaitingPerson(this, p);
-			}
-		}
-		if(ps.isEmpty()) {
-			return null;
-		}
-		return ps;
- 	}
-=======
+
 //	private ArrayList<Person> peopleIntoElevator(){
 //		return WaitingPeople.peopleIntoElevator(this);
 // 	}
->>>>>>> DEVELOPEMENT
 	
 	public void service() {
 		if(peopleOutOfEevator() != null) {
@@ -151,16 +130,11 @@ public class Elevator implements Runnable{
 				people.remove(p);
 			}
 		}
-<<<<<<< HEAD
-		if(peopleIntoElevator() != null) {
-			for(Person p : peopleOutOfEevator()) {
-				people.remove(p);
-=======
+
 		if(waitingPeople.peopleIntoElevator(this) != null) {
 			for(Person p : waitingPeople.peopleIntoElevator(this)) {
 				people.add(p);
 				waitingPeople.removeWaitingPerson(this, p);
->>>>>>> DEVELOPEMENT
 			}
 		}
 		state = State.SERVICE;
@@ -208,16 +182,6 @@ public class Elevator implements Runnable{
 				currentFloor - person.getStartFloor() : person.getStartFloor() - currentFloor;
 	}
 	
-<<<<<<< HEAD
-	public Person getFirstWaitingPerson() {
-		return people.peek();
-	}
-	
-	public Person getFirstDeliverPerson() {
-		return waitingPeople.getWaitingPeople().get(this).peek();
-	}
-	
-=======
 	public Person getFirstDeliverPerson() {
 		if(people.isEmpty()) {
 			return null;
@@ -239,7 +203,6 @@ public class Elevator implements Runnable{
 	public static boolean isGoingUpToDeliverPerson(int currentFloor, Person person) {
 		return currentFloor - person.getDestinationFloor() < 0;
 	}
->>>>>>> DEVELOPEMENT
 	
 	public int calculateTime(Queue<Person> people) {
 		
@@ -396,37 +359,6 @@ public class Elevator implements Runnable{
 			try {
 				log.info(this.toString());
 				
-<<<<<<< HEAD
-				Person waitingPerson = getFirstWaitingPerson();
-				Person deliverPerson = getFirstDeliverPerson();
-				if(waitingPerson != null && deliverPerson != null) {
-					if(getNumFloorToGo(currentFloor, waitingPerson) > getNumFloorToGo(currentFloor, deliverPerson)) {
-						
-					}else {
-						
-					}
-				}else if(waitingPerson != null) {
-					if(currentFloor == waitingPerson.getStartFloor()) {
-						service();
-					}else {
-						
-					}
-				}else if(deliverPerson != null) {
-					if(currentFloor == deliverPerson.getStartFloor()) {
-						service();
-					}else {
-						
-					}
-				}else {
-					if(currentFloor == 1) {
-						
-					}else {
-						
-					}
-				}
-				
-				Thread.sleep(1000);
-=======
 				Person waitingPerson = waitingPeople.getFirstWaitingPerson(this);
 				Person deliverPerson = getFirstDeliverPerson();
 				if(waitingPerson != null && deliverPerson != null) {
@@ -564,7 +496,6 @@ public class Elevator implements Runnable{
 					Thread.sleep(1000);
 				}
 				
->>>>>>> DEVELOPEMENT
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
