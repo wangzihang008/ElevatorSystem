@@ -30,7 +30,7 @@ public class ElevatorView {
 		
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel(new GridLayout(3, 2, 20, 20));
-		panel.setSize(100, 150);
+		panel.setSize(200, 300);
 		
 		JLabel labelCurrentFloor = new JLabel("Current Floor");
 		JLabel labelDestinationFloor = new JLabel("Destination Floor");
@@ -48,7 +48,7 @@ public class ElevatorView {
 		
 		frame.setContentPane(panel);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(100, 150));
+        frame.setPreferredSize(new Dimension(200, 300));
         frame.pack();
 		frame.setVisible(true);
 	}

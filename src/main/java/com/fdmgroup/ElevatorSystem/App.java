@@ -25,6 +25,7 @@ public class App
         numElevators = scanner.nextLine();
         System.out.print("Max number of elevator are : ");
         elevatorLimit = scanner.nextLine();
+        scanner.close();
         
         ElevatorController elevatorController = 
         		new ElevatorController(Integer.parseInt(totalFloor), Integer.parseInt(numElevators), Integer.parseInt(elevatorLimit));

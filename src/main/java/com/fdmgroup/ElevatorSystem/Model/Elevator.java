@@ -285,7 +285,7 @@ public class Elevator implements Runnable{
 		}else if(state == State.SERVICE) {
 			result += "It is servicing. "; 
 		}else if(state == State.STOP) {
-			result += "It stop. "; 
+			result += "It stops. "; 
 		}else if(state == State.SLOWDOWN) {
 			result += "It is slowing down. "; 
 		}else if(state == State.SPEEDUP) {

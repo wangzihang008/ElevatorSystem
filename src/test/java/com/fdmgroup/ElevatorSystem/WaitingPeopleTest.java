@@ -1,5 +1,7 @@
 package com.fdmgroup.ElevatorSystem;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -43,9 +45,10 @@ public class WaitingPeopleTest {
         wp.setElevators(elevators);
         
         
-        System.out.println(wp.getSize());
-        System.out.println(wp.getQueue().size());
+        //System.out.println(wp.getSize());
+        //System.out.println(wp.getQueue().size());
         
 	
+        assertEquals(5, wp.getSize());
 	}
 }
