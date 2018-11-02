@@ -40,10 +40,12 @@ public class WaitingPeople {
 	
 	public void putWaitingQueue(Elevator elevator, Queue<Person> list) {
 		waitingPeople.put(elevator.getName(), list);
+		notifyAllElevator();
 	}
 	
 	public void addWaitingPersonIntoQueue(Elevator elevator, Person person) {
 		waitingPeople.get(elevator.getName()).add(person);
+		notifyAllElevator();
 	}
 
 	public WaitingPeople(List<Elevator> elevators) {

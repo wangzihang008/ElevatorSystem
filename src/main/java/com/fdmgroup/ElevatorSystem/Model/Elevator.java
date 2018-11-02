@@ -104,7 +104,7 @@ public class Elevator implements Runnable{
 		currentFloor--;
 	}
 	
-	private ArrayList<Person> peopleOutOfEevator(){
+	public ArrayList<Person> peopleOutOfEevator(){
 		ArrayList<Person> ps = new ArrayList<Person>();
 		Iterator<Person> iterator = people.iterator();
 		while(iterator.hasNext()) {
@@ -147,6 +147,7 @@ public class Elevator implements Runnable{
 					}
 				}
 				waitingPeople.addWaitingPersonIntoQueue(this, p);
+				waitingPeople.notifyAllElevator();
 			}
 		}
 
@@ -206,13 +207,6 @@ public class Elevator implements Runnable{
 			return null;
 		}
 		return people.peek();
-	}
-	
-	public Person getFirstWaitingPerson() {
-		if(waitingPeople.getWaitingPeople().get(this.getName()).isEmpty()) {
-			return null;
-		}
-		return waitingPeople.getWaitingPeople().get(this.getName()).peek();
 	}
 	
 	public static boolean isGoingUpToPickPerson(int currentFloor, Person person) {
