@@ -1,14 +1,26 @@
 package com.fdmgroup.ElevatorSystem.Model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-public class Elevator implements Runnable{
+public class Elevator implements Runnable, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1730676527427331438L;
 	private String name;
 	private boolean isUp;
 	private int currentFloor;
@@ -17,212 +29,241 @@ public class Elevator implements Runnable{
 	private int max;
 	private WaitingPeople waitingPeople;
 	private Logger log = LogManager.getLogger(Elevator.class);
-	
+
 	public int getMax() {
 		return max;
 	}
+
 	public void setMax(int max) {
 		this.max = max;
 	}
+
 	public State getState() {
 		return state;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public boolean isUp() {
 		return isUp;
 	}
+
 	public void setUp(boolean isUp) {
 		this.isUp = isUp;
 	}
+
 	public int getCurrentFloor() {
 		return currentFloor;
 	}
+
 	public void setCurrentFloor(int currentFloor) {
 		this.currentFloor = currentFloor;
 	}
+
 	public Queue<Person> getPeople() {
 		return people;
 	}
+
 	public void setPeople(Queue<Person> people) {
 		this.people = people;
 	}
-	
+
 	public void pickPassenger(Person person) {
 		people.add(person);
 		person.setIsWaiting(false);
 	}
-	
+
 	public Person deliverPassager() {
 		return people.poll();
 	}
-	
+
 	public boolean isFull() {
 		return max == people.size();
 	}
-	
+
 	public boolean isEmpty() {
 		return people.size() < 1;
 	}
-	
-	public Elevator() {}
-	
+
+	public Elevator() {
+	}
+
 	public Elevator(int max, WaitingPeople waitingPeople) {
 		super();
+
+		Comparator<Person> personComparator = new PersonComparator();
+
 		isUp = true;
 		currentFloor = 0;
-		people = new LinkedBlockingQueue<Person>();
+		people = new PriorityQueue<Person>(personComparator);
 		state = State.STOP;
 		this.max = max;
 		this.waitingPeople = waitingPeople;
 	}
-	
+
 	public void goUp() {
-		
+
 		state = State.MOVE;
 		isUp = true;
 		currentFloor++;
 	}
-	
+
 	public void goDown() {
-		
+
 		state = State.MOVE;
 		isUp = false;
 		currentFloor--;
 	}
-	
+
 	public void service() {
-		
+
 		state = State.SERVICE;
 	}
-	
+
 	public void stop() {
-		
+
 		state = State.STOP;
 	}
-	
+
 	public void speedUp() {
-		
+
 		state = State.SPEEDUP;
 	}
-	
+
 	public void slowDown() {
-		
+
 		state = State.SLOWDOWN;
 	}
-	
-	public int getLastPassengerDestinationFloor() {
-		Iterator<Person> iterator = people.iterator();
-		if(iterator.hasNext()) {
-			Person lastPerson = iterator.next();
-			while(iterator.hasNext()) {
-				lastPerson = iterator.next();
-			}
-			return lastPerson.getDestinationFloor();
-		}
-		return getCurrentFloor();
+
+	/*
+	 * public int getLastPassengerDestinationFloor() { Iterator<Person> iterator =
+	 * people.iterator(); if(iterator.hasNext()) { Person lastPerson =
+	 * iterator.next(); while(iterator.hasNext()) { lastPerson = iterator.next(); }
+	 * return lastPerson.getDestinationFloor(); } return getCurrentFloor(); }
+	 * 
+	 * public static int getPickUpTime(int currentFloor, Person person) { int result
+	 * = 0;
+	 * 
+	 * if(currentFloor != person.getStartFloor()) { result = 2 +
+	 * getNumFloorToGo(currentFloor, person); }
+	 * 
+	 * return result; }
+	 * 
+	 * public static int getNumFloorToGo(int currentFloor, Person person) { return
+	 * currentFloor - person.getStartFloor() > 0 ? currentFloor -
+	 * person.getStartFloor() : person.getStartFloor() - currentFloor; }
+	 */
+
+	private static <T> Queue<T> deepCopy(Queue<T> src) throws IOException, ClassNotFoundException {
+
+		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+		ObjectOutputStream out = new ObjectOutputStream(byteOut);
+		out.writeObject(src);
+
+		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+		ObjectInputStream in = new ObjectInputStream(byteIn);
+		@SuppressWarnings("unchecked")
+		Queue<T> dest = (Queue<T>) in.readObject();
+		return dest;
 	}
-	
-	public static int getPickUpTime(int currentFloor, Person person) {
-		int result = 0;
-		
-		if(currentFloor != person.getStartFloor()) {
-			result = 2 + getNumFloorToGo(currentFloor, person);
-		}
-		
-		return result;
-	}
-	
-	public static int getNumFloorToGo(int currentFloor, Person person) {
-		return currentFloor - person.getStartFloor() > 0 ? 
-				currentFloor - person.getStartFloor() : person.getStartFloor() - currentFloor;
-	}
-	
-	
+
 	public int calculateTime(Queue<Person> people) {
-		
+
 		int time = 0;
 		int atFloor = currentFloor;
 		boolean direction = isUp;
 		State currentState = state;
 		int len = people.size();
 		for (int i = 0; i < len; i++) {
-					
-			Person nextPersonToOut = people.poll();
+
+			Queue<Person> people2 = null;
+
+			try {
+				people2 = deepCopy(people);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Person nextPersonToOut = people2.poll();
 			if (nextPersonToOut.getIsWaiting()) {
-				
+
 				if (((nextPersonToOut.getStartFloor() - atFloor) > 0) != direction) {
-					
+
 					direction = !direction;
 					if (currentState == State.SPEEDUP) {
-						
-						time += 3; //need to speed up, slow down, change direction, and then speed up
-					}else if (currentState == State.SLOWDOWN || currentState == State.MOVE) {
-						
-						time += 2; //need to slow down, change direction, and then speed up
-					}else {
-						
-						time += 1; //stop or service, need to speed up
+
+						time += 3; // need to speed up, slow down, change direction, and then speed up
+					} else if (currentState == State.SLOWDOWN || currentState == State.MOVE) {
+
+						time += 2; // need to slow down, change direction, and then speed up
+					} else {
+
+						time += 1; // stop or service, need to speed up
 					}
-				}else {
-					
+				} else {
+
 					if (currentState == State.SLOWDOWN) {
-						
-						time += 2; //need to slow down, and then speed up
-					}else if (currentState == State.MOVE) {
-						
-						time += 0; //no need to speed up
-					}else {
-						
-						time += 1; //speed up, stop or service, need to speed up
+
+						time += 2; // need to slow down, and then speed up
+					} else if (currentState == State.MOVE) {
+
+						time += 0; // no need to speed up
+					} else {
+
+						time += 1; // speed up, stop or service, need to speed up
 					}
 				}
-				time += Math.abs(nextPersonToOut.getStartFloor() - atFloor);//move
+				time += Math.abs(nextPersonToOut.getStartFloor() - atFloor);// move
 				atFloor = nextPersonToOut.getStartFloor();
-				time += 1; //slow down
-				time += 2; //service
+				time += 1; // slow down
+				time += 2; // service
 				currentState = State.SERVICE;
 			}
 			if (((nextPersonToOut.getDestinationFloor() - atFloor) > 0) != direction) {
-				
+
 				direction = !direction;
 				if (currentState == State.SPEEDUP) {
-						
-					time += 3; //need to speed up, slow down, change direction, and then speed up 
-				}else if (currentState == State.SLOWDOWN || currentState == State.MOVE) {
-						
-					time += 2; //need to slow down, change direction, and then speed up
-				}else {
-					
-					time += 1; //stop or service, need to speed up
+
+					time += 3; // need to speed up, slow down, change direction, and then speed up
+				} else if (currentState == State.SLOWDOWN || currentState == State.MOVE) {
+
+					time += 2; // need to slow down, change direction, and then speed up
+				} else {
+
+					time += 1; // stop or service, need to speed up
 				}
-			}else {
-				
+			} else {
+
 				if (currentState == State.SLOWDOWN) {
-					
-					time += 2; //need to slow down, and then speed up
-				}else if (currentState == State.MOVE) {
-					
-					time += 0; //no need to speed up
-				}else {
-					
-					time += 1; //speed up, stop or service, need to speed up
+
+					time += 2; // need to slow down, and then speed up
+				} else if (currentState == State.MOVE) {
+
+					time += 0; // no need to speed up
+				} else {
+
+					time += 1; // speed up, stop or service, need to speed up
 				}
 			}
-			time += Math.abs(nextPersonToOut.getDestinationFloor() - atFloor); //move
-			time += 1; //slow down
-			time += 2; //service
+			time += Math.abs(nextPersonToOut.getDestinationFloor() - atFloor); // move
+			time += 1; // slow down
+			time += 2; // service
 			currentState = State.SERVICE;
-			atFloor = nextPersonToOut.getDestinationFloor(); 
+			atFloor = nextPersonToOut.getDestinationFloor();
 		}
-		
+
 		return time;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -236,7 +277,7 @@ public class Elevator implements Runnable{
 		result = prime * result + ((waitingPeople == null) ? 0 : waitingPeople.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -271,35 +312,34 @@ public class Elevator implements Runnable{
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		String result = name + " is at Level " + currentFloor + ". ";
 		result += "There are " + people.size() + " people in this elevator. ";
-		if(state == State.MOVE) {
-			if(isUp) {
-				result += "It is going up. "; 
-			}else {
-				result += "It is going down. "; 
+		if (state == State.MOVE) {
+			if (isUp) {
+				result += "It is going up. ";
+			} else {
+				result += "It is going down. ";
 			}
-		}else if(state == State.SERVICE) {
-			result += "It is servicing. "; 
-		}else if(state == State.STOP) {
-			result += "It stop. "; 
-		}else if(state == State.SLOWDOWN) {
-			result += "It is slowing down. "; 
-		}else if(state == State.SPEEDUP) {
-			result += "It is speeding up. "; 
+		} else if (state == State.SERVICE) {
+			result += "It is servicing. ";
+		} else if (state == State.STOP) {
+			result += "It stop. ";
+		} else if (state == State.SLOWDOWN) {
+			result += "It is slowing down. ";
+		} else if (state == State.SPEEDUP) {
+			result += "It is speeding up. ";
 		}
-		
+
 		return result;
 	}
-	
+
 	public void run() {
 		// TODO Auto-generated method stub
-		while(true) {
-			
-			
+		while (true) {
+
 			// Print info to console and sleep for next second
 			try {
 				log.info(this.toString());
