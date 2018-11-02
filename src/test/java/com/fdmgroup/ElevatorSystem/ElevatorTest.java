@@ -187,8 +187,8 @@ public class ElevatorTest {
 		
 		// Act
 		elevator.goUp();
-		System.out.println(elevator.peopleOutOfEevator().size());
-		System.out.println(waitingPeople.getWaitingPeopleForElevatorAviliable().size());
+//		System.out.println(elevator.peopleOutOfEevator().size());
+//		System.out.println(waitingPeople.getWaitingPeopleForElevatorAviliable().size());
 		elevator.service();
 		
 		// Assert
