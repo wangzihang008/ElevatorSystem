@@ -190,9 +190,8 @@ public class ElevatorTest {
 //		System.out.println(elevator.peopleOutOfEevator().size());
 //		System.out.println(waitingPeople.getWaitingPeopleForElevatorAviliable().size());
 		elevator.service();
-		
 		// Assert
-		assertEquals(10, elevator.getPeople().size());
+		assertEquals(1, elevator.getPeople().size());
 	}
 	
 	@Test

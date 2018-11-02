@@ -40,6 +40,9 @@ public class ElevatorController {
 		}
 		
 		waitingPeople = new WaitingPeople(elevators);
+		for(Elevator e : elevators) {
+			e.setWaitingPeople(waitingPeople);
+		}
 	}
 	
 	public void addNewPassenger(Person person) {
