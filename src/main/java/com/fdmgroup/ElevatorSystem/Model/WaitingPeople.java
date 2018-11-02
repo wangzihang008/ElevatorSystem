@@ -43,11 +43,20 @@ public class WaitingPeople {
 		notifyAllElevator();
 	}
 	
+	/**
+	 * 
+	 * @param elevator
+	 * @param person
+	 */
 	public void addWaitingPersonIntoQueue(Elevator elevator, Person person) {
 		waitingPeople.get(elevator.getName()).add(person);
 		notifyAllElevator();
 	}
 
+	/**
+	 * 
+	 * @param elevators
+	 */
 	public WaitingPeople(List<Elevator> elevators) {
 		super();
 		waitingPeople = new HashMap<String, Queue<Person>>();
@@ -59,6 +68,10 @@ public class WaitingPeople {
 		notifyAllElevator();
 	}
 	
+	/**
+	 * 
+	 * @return true if every elevator is full, otherwise return false
+	 */
 	public boolean isAllElevatorFull() {
 		for(Elevator e : elevators) {
 			if(!e.isFull()) {

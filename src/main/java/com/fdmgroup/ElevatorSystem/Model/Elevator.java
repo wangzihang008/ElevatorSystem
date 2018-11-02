@@ -12,7 +12,7 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-public class Elevator implements Runnable{
+public class Elevator implements Runnable {
 	private String name;
 	private boolean isUp;
 	private int currentFloor;
@@ -21,66 +21,99 @@ public class Elevator implements Runnable{
 	private int max;
 	private WaitingPeople waitingPeople;
 	private Logger log = LogManager.getLogger(Elevator.class);
-	
+
 	public WaitingPeople getWaitingPeople() {
 		return waitingPeople;
 	}
+
 	public void setWaitingPeople(WaitingPeople waitingPeople) {
 		this.waitingPeople = waitingPeople;
 	}
+
 	public int getMax() {
 		return max;
 	}
+
 	public void setMax(int max) {
 		this.max = max;
 	}
+
 	public State getState() {
 		return state;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public boolean isUp() {
 		return isUp;
 	}
+
 	public void setUp(boolean isUp) {
 		this.isUp = isUp;
 	}
+
 	public int getCurrentFloor() {
 		return currentFloor;
 	}
+
 	public void setCurrentFloor(int currentFloor) {
 		this.currentFloor = currentFloor;
 	}
+
 	public Queue<Person> getPeople() {
 		return people;
 	}
+
 	public void setPeople(Queue<Person> people) {
 		this.people = people;
 	}
-	
+
+	/**
+	 * Pick Up Person
+	 * 
+	 * @param person
+	 */
 	public void pickPassenger(Person person) {
 		people.add(person);
 		person.setIsWaiting(false);
 	}
-	
+
+	/**
+	 * Deliver First Person From Queue
+	 * 
+	 * @return
+	 */
 	public Person deliverPassager() {
 		return people.poll();
 	}
-	
+
+	/**
+	 * Return true if Elevator is Full, otherwise return false
+	 * 
+	 * @return
+	 */
 	public boolean isFull() {
 		return max == people.size();
 	}
-	
+
+	/**
+	 * Return true if Elevator is Empty, otherwise return false
+	 * 
+	 * @return
+	 */
 	public boolean isEmpty() {
 		return people.size() < 1;
 	}
-	
-	public Elevator() {}
-	
+
+	public Elevator() {
+	}
+
 	public Elevator(int max) {
 		super();
 		isUp = true;
@@ -89,59 +122,72 @@ public class Elevator implements Runnable{
 		state = State.STOP;
 		this.max = max;
 	}
-	
+
+	/**
+	 * Elevator go up with 1 Floor
+	 */
 	public void goUp() {
-		
+
 		state = State.MOVE;
 		isUp = true;
 		currentFloor++;
 	}
-	
+
+	/**
+	 * Elevator go down with 1 Floor
+	 */
 	public void goDown() {
-		
+
 		state = State.MOVE;
 		isUp = false;
 		currentFloor--;
 	}
-	
-	public ArrayList<Person> peopleOutOfEevator(){
+
+	/**
+	 * Return people who is going off the elevator at current floor,
+	 * 
+	 * @return Person List or Null
+	 */
+	public ArrayList<Person> peopleOutOfEevator() {
 		ArrayList<Person> ps = new ArrayList<Person>();
 		Iterator<Person> iterator = people.iterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Person p = iterator.next();
-			if(p.getDestinationFloor() == currentFloor) {
+			if (p.getDestinationFloor() == currentFloor) {
 				ps.add(p);
 			}
 		}
-		if(ps.isEmpty()) {
+		if (ps.isEmpty()) {
 			return null;
 		}
 		return ps;
 	}
-	
 
-//	private ArrayList<Person> peopleIntoElevator(){
-//		return WaitingPeople.peopleIntoElevator(this);
-// 	}
-	
+	// private ArrayList<Person> peopleIntoElevator(){
+	// return WaitingPeople.peopleIntoElevator(this);
+	// }
+	/**
+	 * Elevator pick up person or deliver person from elevator
+	 */
 	public void service() {
-		if(peopleOutOfEevator() != null) {
-			for(Person p : peopleOutOfEevator()) {
+		// Deliver people
+		if (peopleOutOfEevator() != null) {
+			for (Person p : peopleOutOfEevator()) {
 				people.remove(p);
 			}
-			if(waitingPeople.getWaitingPeopleForElevatorAviliable().size() > 0) {
+			if (waitingPeople.getWaitingPeopleForElevatorAviliable().size() > 0) {
 				Person p = null;
 				int num = -1;
-				for(Person person: waitingPeople.getWaitingPeopleForElevatorAviliable()) {
-					if(p == null) {
+				for (Person person : waitingPeople.getWaitingPeopleForElevatorAviliable()) {
+					if (p == null) {
 						p = person;
-						num = calculateTime(getPeople()) + 
-								Elevator.getPickUpTime(getLastPassengerDestinationFloor(), person);
-					}else {
-						if(num > calculateTime(getPeople()) + 
-								Elevator.getPickUpTime(getLastPassengerDestinationFloor(), person)) {
-							num = calculateTime(getPeople()) + 
-									Elevator.getPickUpTime(getLastPassengerDestinationFloor(), person);
+						num = calculateTime(getPeople())
+								+ Elevator.getPickUpTime(getLastPassengerDestinationFloor(), person);
+					} else {
+						if (num > calculateTime(getPeople())
+								+ Elevator.getPickUpTime(getLastPassengerDestinationFloor(), person)) {
+							num = calculateTime(getPeople())
+									+ Elevator.getPickUpTime(getLastPassengerDestinationFloor(), person);
 							p = person;
 						}
 					}
@@ -150,9 +196,9 @@ public class Elevator implements Runnable{
 				waitingPeople.notifyAllElevator();
 			}
 		}
-
-		if(waitingPeople.peopleIntoElevator(this) != null) {
-			for(Person p : waitingPeople.peopleIntoElevator(this)) {
+		// Pick up Person
+		if (waitingPeople.peopleIntoElevator(this) != null) {
+			for (Person p : waitingPeople.peopleIntoElevator(this)) {
 				people.add(p);
 				waitingPeople.removeWaitingPerson(this, p);
 			}
@@ -160,144 +206,193 @@ public class Elevator implements Runnable{
 		}
 		state = State.SERVICE;
 	}
-	
+
+	/**
+	 * Elevator stop at current floor
+	 */
 	public void stop() {
-		
+
 		state = State.STOP;
 	}
-	
+
+	/**
+	 * Elevator is speeding up
+	 */
 	public void speedUp() {
-		
+
 		state = State.SPEEDUP;
 	}
-	
+
+	/**
+	 * Elevator is slowing down
+	 */
 	public void slowDown() {
-		
+
 		state = State.SLOWDOWN;
 	}
-	
+
+	/**
+	 * Get final destination floor for this moment
+	 * 
+	 * @return Destination Floor of Last Passenger in queue
+	 */
 	public int getLastPassengerDestinationFloor() {
 		Iterator<Person> iterator = people.iterator();
-		if(iterator.hasNext()) {
+		if (iterator.hasNext()) {
 			Person lastPerson = iterator.next();
-			while(iterator.hasNext()) {
+			while (iterator.hasNext()) {
 				lastPerson = iterator.next();
 			}
 			return lastPerson.getDestinationFloor();
 		}
 		return getCurrentFloor();
 	}
-	
+
+	/**
+	 * 
+	 * @param currentFloor
+	 * @param person
+	 * @return How long would be used to pick up the person from currentFloor
+	 */
 	public static int getPickUpTime(int currentFloor, Person person) {
 		int result = 0;
-		
-		if(currentFloor != person.getStartFloor()) {
+
+		if (currentFloor != person.getStartFloor()) {
 			result = 2 + getNumFloorToGo(currentFloor, person);
 		}
-		
+
 		return result;
 	}
-	
+
+	/**
+	 * 
+	 * @param currentFloor
+	 * @param person
+	 * @return How many floors between person and elevator at this moment
+	 */
 	public static int getNumFloorToGo(int currentFloor, Person person) {
-		return currentFloor - person.getStartFloor() > 0 ? 
-				currentFloor - person.getStartFloor() : person.getStartFloor() - currentFloor;
+		return currentFloor - person.getStartFloor() > 0 ? currentFloor - person.getStartFloor()
+				: person.getStartFloor() - currentFloor;
 	}
-	
+
+	/**
+	 * 
+	 * @return First person in deliver queue if queue is not empty, otherwise return null
+	 */
 	public Person getFirstDeliverPerson() {
-		if(people.isEmpty()) {
+		if (people.isEmpty()) {
 			return null;
 		}
 		return people.peek();
 	}
-	
+
+	/**
+	 * 
+	 * @param currentFloor
+	 * @param person
+	 * @return true if waiting person is at higher floor then currentFloor,
+	 * 		   otherwise return false
+	 */
 	public static boolean isGoingUpToPickPerson(int currentFloor, Person person) {
 		return currentFloor - person.getStartFloor() < 0;
 	}
-	
+
+	/**
+	 * 
+	 * @param currentFloor
+	 * @param person
+	 * @return true if deliver person is at higher floor then currentFloor,
+	 * 		   otherwise return false
+	 */
 	public static boolean isGoingUpToDeliverPerson(int currentFloor, Person person) {
 		return currentFloor - person.getDestinationFloor() < 0;
 	}
-	
+
+	/**
+	 * 
+	 * @param people
+	 * @return Calculated result of deliver all person in deliver queue
+	 */
 	public int calculateTime(Queue<Person> people) {
-		
+
 		int time = 0;
 		int atFloor = currentFloor;
 		boolean direction = isUp;
 		State currentState = state;
 		int len = people.size();
 		for (int i = 0; i < len; i++) {
-					
+
 			Person nextPersonToOut = people.poll();
 			if (nextPersonToOut.getIsWaiting()) {
-				
+
 				if (((nextPersonToOut.getStartFloor() - atFloor) > 0) != direction) {
-					
+
 					direction = !direction;
 					if (currentState == State.SPEEDUP) {
-						
-						time += 3; //need to speed up, slow down, change direction, and then speed up
-					}else if (currentState == State.SLOWDOWN || currentState == State.MOVE) {
-						
-						time += 2; //need to slow down, change direction, and then speed up
-					}else {
-						
-						time += 1; //stop or service, need to speed up
+
+						time += 3; // need to speed up, slow down, change direction, and then speed up
+					} else if (currentState == State.SLOWDOWN || currentState == State.MOVE) {
+
+						time += 2; // need to slow down, change direction, and then speed up
+					} else {
+
+						time += 1; // stop or service, need to speed up
 					}
-				}else {
-					
+				} else {
+
 					if (currentState == State.SLOWDOWN) {
-						
-						time += 2; //need to slow down, and then speed up
-					}else if (currentState == State.MOVE) {
-						
-						time += 0; //no need to speed up
-					}else {
-						
-						time += 1; //speed up, stop or service, need to speed up
+
+						time += 2; // need to slow down, and then speed up
+					} else if (currentState == State.MOVE) {
+
+						time += 0; // no need to speed up
+					} else {
+
+						time += 1; // speed up, stop or service, need to speed up
 					}
 				}
-				time += Math.abs(nextPersonToOut.getStartFloor() - atFloor);//move
+				time += Math.abs(nextPersonToOut.getStartFloor() - atFloor);// move
 				atFloor = nextPersonToOut.getStartFloor();
-				time += 1; //slow down
-				time += 2; //service
+				time += 1; // slow down
+				time += 2; // service
 				currentState = State.SERVICE;
 			}
 			if (((nextPersonToOut.getDestinationFloor() - atFloor) > 0) != direction) {
-				
+
 				direction = !direction;
 				if (currentState == State.SPEEDUP) {
-						
-					time += 3; //need to speed up, slow down, change direction, and then speed up 
-				}else if (currentState == State.SLOWDOWN || currentState == State.MOVE) {
-						
-					time += 2; //need to slow down, change direction, and then speed up
-				}else {
-					
-					time += 1; //stop or service, need to speed up
+
+					time += 3; // need to speed up, slow down, change direction, and then speed up
+				} else if (currentState == State.SLOWDOWN || currentState == State.MOVE) {
+
+					time += 2; // need to slow down, change direction, and then speed up
+				} else {
+
+					time += 1; // stop or service, need to speed up
 				}
-			}else {
-				
+			} else {
+
 				if (currentState == State.SLOWDOWN) {
-					
-					time += 2; //need to slow down, and then speed up
-				}else if (currentState == State.MOVE) {
-					
-					time += 0; //no need to speed up
-				}else {
-					
-					time += 1; //speed up, stop or service, need to speed up
+
+					time += 2; // need to slow down, and then speed up
+				} else if (currentState == State.MOVE) {
+
+					time += 0; // no need to speed up
+				} else {
+
+					time += 1; // speed up, stop or service, need to speed up
 				}
 			}
-			time += Math.abs(nextPersonToOut.getDestinationFloor() - atFloor); //move
-			time += 1; //slow down
-			time += 2; //service
+			time += Math.abs(nextPersonToOut.getDestinationFloor() - atFloor); // move
+			time += 1; // slow down
+			time += 2; // service
 			currentState = State.SERVICE;
-			atFloor = nextPersonToOut.getDestinationFloor(); 
+			atFloor = nextPersonToOut.getDestinationFloor();
 		}
-		
+
 		return time;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -310,7 +405,7 @@ public class Elevator implements Runnable{
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -340,122 +435,63 @@ public class Elevator implements Runnable{
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		String result = name + " is at Level " + currentFloor + ". ";
 		result += "There are " + people.size() + " people in this elevator. ";
-		if(state == State.MOVE) {
-			if(isUp) {
-				result += "It is going up. "; 
-			}else {
-				result += "It is going down. "; 
+		if (state == State.MOVE) {
+			if (isUp) {
+				result += "It is going up. ";
+			} else {
+				result += "It is going down. ";
 			}
-		}else if(state == State.SERVICE) {
-			result += "It is servicing. "; 
-		}else if(state == State.STOP) {
-			result += "It stop. "; 
-		}else if(state == State.SLOWDOWN) {
-			result += "It is slowing down. "; 
-		}else if(state == State.SPEEDUP) {
-			result += "It is speeding up. "; 
+		} else if (state == State.SERVICE) {
+			result += "It is servicing. ";
+		} else if (state == State.STOP) {
+			result += "It stop. ";
+		} else if (state == State.SLOWDOWN) {
+			result += "It is slowing down. ";
+		} else if (state == State.SPEEDUP) {
+			result += "It is speeding up. ";
 		}
-		
+
 		return result;
 	}
-	
+
+	/**
+	 * Thread job
+	 */
 	public void run() {
 		// TODO Auto-generated method stub
-		while(true) {
-			
-			
+		while (true) {
+
 			// Print info to console and sleep for next second
 			try {
 				log.info(this.toString());
-				
+
 				Person waitingPerson = waitingPeople.getFirstWaitingPerson(this);
 				Person deliverPerson = getFirstDeliverPerson();
-				if(waitingPerson != null && deliverPerson != null) {
-					if(getNumFloorToGo(currentFloor, waitingPerson) > getNumFloorToGo(currentFloor, deliverPerson)) {
-						switch(state) {
-							case STOP:
-								speedUp();
-								break;
-							case SPEEDUP:
-								if(isGoingUpToDeliverPerson(currentFloor, deliverPerson)) {
-									goUp();
-								}else {
-									goDown();
-								}
-								break;
-							case MOVE:
-								if(currentFloor == deliverPerson.getDestinationFloor()) {
-									slowDown();
-								}else {
-									if(isUp) {
-										goUp();
-									}else {
-										goDown();
-									}
-								}
-								break;
-							case SLOWDOWN:
-								service();
-								break;
-							case SERVICE:
-								speedUp();
-								break;
-						}
-					}else {
-						switch(state) {
-							case STOP:
-								speedUp();
-								break;
-							case SPEEDUP:
-								if(isGoingUpToPickPerson(currentFloor, waitingPerson)) {
-									goUp();
-								}else {
-									goDown();
-								}
-								break;
-							case MOVE:
-								if(currentFloor == waitingPerson.getStartFloor()) {
-									slowDown();
-								}else {
-									if(isUp) {
-										goUp();
-									}else {
-										goDown();
-									}
-								}
-								break;
-							case SLOWDOWN:
-								service();
-								break;
-							case SERVICE:
-								speedUp();
-								break;
-						}
-					}
-				}else if(waitingPerson != null) {
-					switch(state) {
+				if (waitingPerson != null && deliverPerson != null) {
+					if (getNumFloorToGo(currentFloor, waitingPerson) > getNumFloorToGo(currentFloor, deliverPerson)) {
+						switch (state) {
 						case STOP:
 							speedUp();
 							break;
 						case SPEEDUP:
-							if(isGoingUpToPickPerson(currentFloor, waitingPerson)) {
+							if (isGoingUpToDeliverPerson(currentFloor, deliverPerson)) {
 								goUp();
-							}else {
+							} else {
 								goDown();
 							}
 							break;
 						case MOVE:
-							if(currentFloor == waitingPerson.getStartFloor()) {
+							if (currentFloor == deliverPerson.getDestinationFloor()) {
 								slowDown();
-							}else {
-								if(isUp) {
+							} else {
+								if (isUp) {
 									goUp();
-								}else {
+								} else {
 									goDown();
 								}
 							}
@@ -466,26 +502,26 @@ public class Elevator implements Runnable{
 						case SERVICE:
 							speedUp();
 							break;
-					}
-				}else if(deliverPerson != null) {
-					switch(state) {
+						}
+					} else {
+						switch (state) {
 						case STOP:
 							speedUp();
 							break;
 						case SPEEDUP:
-							if(isGoingUpToDeliverPerson(currentFloor, deliverPerson)) {
+							if (isGoingUpToPickPerson(currentFloor, waitingPerson)) {
 								goUp();
-							}else {
+							} else {
 								goDown();
 							}
 							break;
 						case MOVE:
-							if(currentFloor == deliverPerson.getDestinationFloor()) {
+							if (currentFloor == waitingPerson.getStartFloor()) {
 								slowDown();
-							}else {
-								if(isUp) {
+							} else {
+								if (isUp) {
 									goUp();
-								}else {
+								} else {
 									goDown();
 								}
 							}
@@ -496,20 +532,81 @@ public class Elevator implements Runnable{
 						case SERVICE:
 							speedUp();
 							break;
+						}
 					}
-				}else {
-					if(currentFloor == 0) {
+				} else if (waitingPerson != null) {
+					switch (state) {
+					case STOP:
+						speedUp();
+						break;
+					case SPEEDUP:
+						if (isGoingUpToPickPerson(currentFloor, waitingPerson)) {
+							goUp();
+						} else {
+							goDown();
+						}
+						break;
+					case MOVE:
+						if (currentFloor == waitingPerson.getStartFloor()) {
+							slowDown();
+						} else {
+							if (isUp) {
+								goUp();
+							} else {
+								goDown();
+							}
+						}
+						break;
+					case SLOWDOWN:
+						service();
+						break;
+					case SERVICE:
+						speedUp();
+						break;
+					}
+				} else if (deliverPerson != null) {
+					switch (state) {
+					case STOP:
+						speedUp();
+						break;
+					case SPEEDUP:
+						if (isGoingUpToDeliverPerson(currentFloor, deliverPerson)) {
+							goUp();
+						} else {
+							goDown();
+						}
+						break;
+					case MOVE:
+						if (currentFloor == deliverPerson.getDestinationFloor()) {
+							slowDown();
+						} else {
+							if (isUp) {
+								goUp();
+							} else {
+								goDown();
+							}
+						}
+						break;
+					case SLOWDOWN:
+						service();
+						break;
+					case SERVICE:
+						speedUp();
+						break;
+					}
+				} else {
+					if (currentFloor == 0) {
 						stop();
-					}else {
+					} else {
 						stop();
 					}
 				}
-				if(state == State.SERVICE) {
+				if (state == State.SERVICE) {
 					Thread.sleep(2000);
-				}else {
+				} else {
 					Thread.sleep(1000);
 				}
-				
+
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
