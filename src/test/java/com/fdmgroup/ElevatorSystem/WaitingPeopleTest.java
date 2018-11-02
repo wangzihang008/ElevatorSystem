@@ -13,14 +13,21 @@ import com.fdmgroup.ElevatorSystem.Model.WaitingPeople;
 
 public class WaitingPeopleTest {
 	private Elevator elevator;
+	private Elevator elevator2;
 	private WaitingPeople waitingPeople;
 	
 	@Before
 	public void setup() {
 		ArrayList<Elevator> elevators = new ArrayList<Elevator>();
 		elevator = new Elevator(5);
+		elevator2 = new Elevator(5);
+		elevator.setName("1");
+		elevator.setName("2");
 		elevators.add(elevator);
+		elevators.add(elevator2);
 		waitingPeople = new WaitingPeople(elevators);
+		elevator.setWaitingPeople(waitingPeople);
+		elevator2.setWaitingPeople(waitingPeople);
 //		elevator.setWaitingPeople(waitingPeople);
 	}
 	
@@ -29,7 +36,9 @@ public class WaitingPeopleTest {
 		// Arrange
 		for(int i = 0; i < 5; i++) {
 			Person p = new Person(0, i);
+			Person p2 = new Person(0, i + 1);
 			elevator.pickPassenger(p);
+			elevator2.pickPassenger(p2);
 		}
 		Person p = new Person(0, 6);
 		// Act
@@ -39,7 +48,7 @@ public class WaitingPeopleTest {
 	}
 	
 	@Test
-	public void test_addNewPassenger_whenElevatorIsAllFull_add1PassengerAfter3_return4() {
+	public void test_addNewPassenger_whenElevatorIsNotAllFull_add1PassengerAfter3_return4() {
 		// Arrange
 		for(int i = 0; i < 3; i++) {
 			Person p = new Person(0, i);
@@ -50,6 +59,41 @@ public class WaitingPeopleTest {
 		waitingPeople.addNewPassenger(p);
 		// Assert
 		assertEquals(4, waitingPeople.getWaitingPeople().get(elevator.getName()).size());
+	}
+	
+	@Test
+	public void test_addNewPassenger_whenElevatorIsNotAllFull_add2Passengers_return1ForElevator2() {
+		// Arrange
+		
+		Person p = new Person(0, 1);
+		Person p2 = new Person(1, 2);
+		
+		// Act
+		waitingPeople.addNewPassenger(p);
+		elevator.pickPassenger(p);
+		waitingPeople.removeWaitingPerson(elevator, p);
+		waitingPeople.addNewPassenger(p2);
+		// Assert
+		assertEquals(0, waitingPeople.getWaitingPeople().get(elevator.getName()).size());
+		assertEquals(1, waitingPeople.getWaitingPeople().get(elevator2.getName()).size());
+	}
+	
+	@Test
+	public void test_addNewPassenger_whenElevatorIsNotAllFull_add2PassengersAfter_return1ForEachElevator() {
+		// Arrange
+		
+		Person p = new Person(0, 1);
+		Person p2 = new Person(0, 2);
+		Person p3 = new Person(1, 3);
+		Person p4 = new Person(2, 4);
+		// Act
+		elevator.pickPassenger(p);
+		elevator.pickPassenger(p2);
+		waitingPeople.addNewPassenger(p3);
+		waitingPeople.addNewPassenger(p4);
+		// Assert
+		assertEquals(0, waitingPeople.getWaitingPeople().get(elevator.getName()).size());
+		assertEquals(2, waitingPeople.getWaitingPeople().get(elevator2.getName()).size());
 	}
 	
 	@Test
@@ -76,8 +120,10 @@ public class WaitingPeopleTest {
 	public void test_getEmptyElevator_noElevatorIsEmpty_returnNull() {
 		// Arrange
 		Person p = new Person(0, 3);
+		Person p2 = new Person(0, 3);
 		// Act
 		elevator.pickPassenger(p);
+		elevator2.pickPassenger(p2);
 		// Assert
 		assertEquals(null, waitingPeople.getEmptyElevator());
 	}

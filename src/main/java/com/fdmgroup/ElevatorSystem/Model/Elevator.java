@@ -156,6 +156,7 @@ public class Elevator implements Runnable{
 				people.add(p);
 				waitingPeople.removeWaitingPerson(this, p);
 			}
+			waitingPeople.notifyAllElevator();
 		}
 		state = State.SERVICE;
 	}
