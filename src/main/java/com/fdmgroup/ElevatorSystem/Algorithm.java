@@ -3,9 +3,6 @@ package com.fdmgroup.ElevatorSystem;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -66,9 +63,9 @@ public class Algorithm {
         }
 
         if (currentIndex == -1) {
+        	HashMap<Elevator, Queue<Person>> tmp = new HashMap<Elevator, Queue<Person>>();
+        	Queue<Person> myqueue = new LinkedBlockingQueue<Person>();
             for (int i = 0; i < result.length; i++) {
-            	HashMap<Elevator, Queue<Person>> tmp = new HashMap<Elevator, Queue<Person>>();
-            	Queue<Person> myqueue = new LinkedBlockingQueue<Person>();
             	// Logic to enumerate all combinations and separate to different maps
             	if (i == 0) {
             		while (! tmp.containsKey(wp.getElevators().get(result[i]))) {
@@ -77,8 +74,7 @@ public class Algorithm {
             		//System.out.println(tmp.keySet() + " " + tmp.values());
             		
             		tmp.get(wp.getElevators().get(result[i])).add((Person) wp.getQueue().get(i));
-            		System.out.println(tmp.keySet() + " " + tmp.values());
-            		mylist.add(tmp);
+            		System.out.println(tmp.keySet() + " " + tmp.values() + "\n");
             		//System.out.println(wp.getWaitingPeople(i) + " " + elevator.get(result[i]).getName());
             	} else {
             		//tmp.add(wp.getWaitingPeople(i));
@@ -87,10 +83,11 @@ public class Algorithm {
             		}
             		
             		tmp.get(wp.getElevators().get(result[i])).add((Person) wp.getQueue().get(i));
-            		System.out.println(tmp.keySet() + " " + tmp.values());
+            		//System.out.println(tmp.keySet() + " " + tmp.values());
             	}
             }
-            //System.out.println();
+            System.out.println();
+            mylist.add(tmp);
            	return mylist;
         }
         
@@ -105,7 +102,6 @@ public class Algorithm {
             
             counter[i]--;
         }
-        //System.out.println(mylist.size());
 		return mylist;
 		
     }

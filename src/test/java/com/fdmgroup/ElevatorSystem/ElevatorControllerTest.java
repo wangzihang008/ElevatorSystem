@@ -18,6 +18,7 @@ public class ElevatorControllerTest {
 
 	@Test
 	public void test() {
+		fail("not yet completed");
 		ElevatorController ec = new ElevatorController(1, 2, 3);
 		ArrayList<Elevator> elevators_flag = new ArrayList<Elevator>();
 		WaitingPeople flag = new WaitingPeople(elevators_flag);

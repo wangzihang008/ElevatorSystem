@@ -1,7 +1,6 @@
 package com.fdmgroup.ElevatorSystem.Model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -121,7 +120,7 @@ public class WaitingPeople {
 			Iterator<Person> iterator = waitingPeople.get(e).iterator();
 			if(iterator.hasNext()) {
 				Person p = iterator.next();
-				result += "Person ";
+				result += "Person " + p.toString();
 			}
 		}
 		

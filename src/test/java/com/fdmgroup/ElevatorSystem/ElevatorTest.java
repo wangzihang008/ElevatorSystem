@@ -3,6 +3,8 @@ package com.fdmgroup.ElevatorSystem;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -94,4 +96,37 @@ public class ElevatorTest {
 		// Assert
 		assertEquals(null, elevator.deliverPassenger());
 	}
+	
+	@Test
+	public void test_pickUpTime() {
+		// Arrange
+		Person p1 = new Person(1, 5);
+		Person p2 = new Person(3, 7);
+		Queue<Person> people = new LinkedBlockingQueue<Person>();
+		people.add(p1);
+		people.add(p2);
+		
+		// Act
+		int time = Elevator.getPickUpTime(1, p2);
+		
+		// Assert
+		assertEquals(4, time);
+	}
+	
+	@Test
+	public void test_calculateTime() {
+		// Arrange
+		Person p1 = new Person(1, 5);
+		Person p2 = new Person(1, 5);
+		Queue<Person> people = new LinkedBlockingQueue<Person>();
+		people.add(p1);
+		people.add(p2);
+		
+		// Act
+		int time = elevator.calculateTime(people);
+		
+		// Assert
+		assertEquals(12, time);
+	}
+	
 }

@@ -8,10 +8,8 @@ import com.fdmgroup.ElevatorSystem.Controller.ElevatorController;
  * Hello world!
  *
  */
-public class App 
-{
-    public static void main( String[] args )
-    {
+public class App {
+    public static void main( String[] args ) {
 
         String totalFloor;
         String numElevators;
@@ -27,9 +25,7 @@ public class App
         elevatorLimit = scanner.nextLine();
         scanner.close();
         
-        ElevatorController elevatorController = 
-        		new ElevatorController(Integer.parseInt(totalFloor), Integer.parseInt(numElevators), Integer.parseInt(elevatorLimit));
-        
-
+        ElevatorController elevatorController = new ElevatorController(Integer.parseInt(totalFloor), Integer.parseInt(numElevators), Integer.parseInt(elevatorLimit));     
+        elevatorController.toString();
     }
 }
