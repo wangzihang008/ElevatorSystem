@@ -200,9 +200,11 @@ public class Elevator implements Runnable {
 		// Pick up Person
 		if (waitingPeople.peopleIntoElevator(this) != null) {
 			for (Person p : waitingPeople.peopleIntoElevator(this)) {
-				System.out.println(p.toString() + " is getting into " + name);
-				people.add(p);
-				waitingPeople.removeWaitingPerson(this, p);
+				if(people.size() < max) {
+					System.out.println(p.toString() + " is getting into " + name);
+					people.add(p);
+					waitingPeople.removeWaitingPerson(this, p);
+				}
 			}
 			waitingPeople.notifyAllElevator();
 		}
@@ -475,7 +477,7 @@ public class Elevator implements Runnable {
 				Person waitingPerson = waitingPeople.getFirstWaitingPerson(this);
 				Person deliverPerson = getFirstDeliverPerson();
 				if (waitingPerson != null && deliverPerson != null) {
-					if (getNumFloorToGo(currentFloor, waitingPerson) > getNumFloorToGo(currentFloor, deliverPerson)) {
+					if (getNumFloorToGo(currentFloor, waitingPerson) > getNumFloorToGo(currentFloor, deliverPerson) || isFull()) {
 						switch (state) {
 						case STOP:
 							speedUp();

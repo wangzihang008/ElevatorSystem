@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
@@ -58,8 +59,16 @@ public class ElevatorView {
 			
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				
-				elevatorController.addNewPassenger(createNewPassenger(textCurrentFloor.getText(), textDestinationFloor.getText()));
+				Person person = createNewPassenger(textCurrentFloor.getText(), textDestinationFloor.getText());
+				if(person.getStartFloor() > 0 && person.getDestinationFloor() <= elevatorController.getTotalFloor()) {
+					elevatorController.addNewPassenger(person);
+				}else {
+					JOptionPane.showMessageDialog(
+							null, 
+							"Invalid Input", 
+							"Information of New Passenger is Invalid! Please Input Again.", 
+							JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 		});
 	}

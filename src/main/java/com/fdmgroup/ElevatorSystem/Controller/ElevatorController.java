@@ -23,6 +23,10 @@ public class ElevatorController {
 	private List<Elevator> elevators;
 	private int totalFloor;
 	
+	public int getTotalFloor() {
+		return totalFloor;
+	}
+
 	public ElevatorController(int totalFloor, int numElevator, int elevatorLimit) {
 		this.totalFloor = totalFloor;
 		elevators = new ArrayList<Elevator>();
