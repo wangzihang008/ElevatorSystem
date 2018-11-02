@@ -81,6 +81,10 @@ public class WaitingPeople {
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @return Empty elevator if there is, otherwise return null
+	 */
 	public Elevator getEmptyElevator() {
 		for(Elevator e : elevators) {
 			if(e.getPeople().isEmpty()) {

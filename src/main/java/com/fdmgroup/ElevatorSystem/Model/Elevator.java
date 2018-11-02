@@ -173,6 +173,7 @@ public class Elevator implements Runnable {
 		// Deliver people
 		if (peopleOutOfEevator() != null) {
 			for (Person p : peopleOutOfEevator()) {
+				System.out.println(p.toString() + " is leaving " + name);
 				people.remove(p);
 			}
 			if (waitingPeople.getWaitingPeopleForElevatorAviliable().size() > 0) {
@@ -199,6 +200,7 @@ public class Elevator implements Runnable {
 		// Pick up Person
 		if (waitingPeople.peopleIntoElevator(this) != null) {
 			for (Person p : waitingPeople.peopleIntoElevator(this)) {
+				System.out.println(p.toString() + " is getting into " + name);
 				people.add(p);
 				waitingPeople.removeWaitingPerson(this, p);
 			}
